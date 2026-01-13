@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import QRScanner from "../components/qr/QRScanner";
-import { buildSpotifyEmbedUrl, parseSpotifyTrackFromScan } from "../spotify/spotifyClient";
+import SpotifyPlayer from "../components/spotify/SpotifyPlayer";
+import { parseSpotifyTrackFromScan, getAccessToken, redirectToSpotifyAuth } from "../spotify/spotifyClient";
 
 const ScanCard = () => {
   const [trackId, setTrackId] = useState<string | null>(null);
@@ -19,35 +20,35 @@ const ScanCard = () => {
     setTrackId(parsedTrackId);
   };
 
-  const embedUrl = useMemo(() => {
-    if (!trackId) return null;
-    return buildSpotifyEmbedUrl(trackId);
-  }, [trackId]);
+  if (!getAccessToken()) {
+    return (
+      <main style={{ maxWidth: 480, margin: "0 auto", padding: 24 }}>
+        <h2>Scan Card</h2>
+        <p>Authenticate with Spotify to play tracks.</p>
+        <button
+          onClick={redirectToSpotifyAuth}
+          style={{ padding: "12px 24px", fontSize: 16, cursor: "pointer" }}
+        >
+          Login with Spotify
+        </button>
+      </main>
+    );
+  }
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: 24 }}>
       <h2>Scan Card</h2>
-      <p>Scan a QR code pointing to a Spotify track to play it inline.</p>
+      <p>Scan a QR code to play a mystery track.</p>
 
       <QRScanner onScan={handleScan} />
 
-      {error && (
-        <p style={{ color: "#d32f2f", marginTop: 12 }}>{error}</p>
-      )}
+      {error && <p style={{ color: "#d32f2f", marginTop: 12 }}>{error}</p>}
 
-      {embedUrl && (
-        <section style={{ marginTop: 24 }}>
-          <h3 style={{ marginBottom: 8 }}>Now playing</h3>
-          <iframe
-            title="Spotify player"
-            src={embedUrl}
-            width="100%"
-            height="160"
-            style={{ borderRadius: 12, border: "none" }}
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          />
-        </section>
-      )}
+      <SpotifyPlayer 
+        trackId={trackId} 
+        onError={setError} 
+        onClearError={() => setError(null)} 
+      />
     </main>
   );
 };
