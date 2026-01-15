@@ -1,6 +1,7 @@
 import { useState } from "react";
 import PrintableCard from "../components/qr/PrintableCard";
 import type { Card } from "../types/Card";
+import { Link } from "react-router-dom";
 
 const CardGeneration = () => {
   // Example cards
@@ -121,6 +122,9 @@ const CardGeneration = () => {
 
   return (
     <main>
+      <p>
+        <Link to="/">Go back</Link>
+      </p>
       <h2>Generate Cards</h2>
       <PrintableCard cards={cards} />
     </main>

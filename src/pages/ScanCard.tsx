@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import QRScanner from "../components/qr/QRScanner";
 import { buildSpotifyEmbedUrl, parseSpotifyTrackFromScan } from "../spotify/spotifyClient";
+import { Link } from "react-router-dom";
 
 const ScanCard = () => {
   const [trackId, setTrackId] = useState<string | null>(null);
@@ -26,6 +27,9 @@ const ScanCard = () => {
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: 24 }}>
+      <p>
+        <Link to="/">Go back</Link>
+      </p>
       <h2>Scan Card</h2>
       <p>Scan a QR code pointing to a Spotify track to play it inline.</p>
 
