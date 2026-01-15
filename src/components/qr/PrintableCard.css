@@ -1,0 +1,199 @@
+/* Print Container */
+.print-container {
+  display: none;
+}
+
+@media print {
+  /* Hide everything except the print container */
+  body > * {
+    display: none !important;
+  }
+  
+  body > div:has(.print-container),
+  .print-container,
+  .print-container * {
+    display: revert !important;
+  }
+
+  /* Hide the print button and headings */
+  button,
+  h2 {
+    display: none !important;
+  }
+
+  /* Show print container as grid to fit multiple cards */
+  .print-container {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 4px !important;
+    padding: 4px !important;
+    background: white !important;
+  }
+
+  /* Card Page */
+  .card-page {
+    page-break-inside: avoid;
+    width: 100%;
+    display: flex !important;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #333 !important;
+    border-radius: 2px !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+    background: #1a1a1a !important;
+  }
+
+  /* card sides */
+  .card-side {
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #333;
+    padding: 2px !important;
+  }
+
+  .card-side:last-child {
+    border-bottom: none;
+  }
+
+  .qr-side {
+    background-color: #1a1a1a !important;
+    padding: 4px !important;
+  }
+
+  .metadata-side {
+    background-color: #222 !important;
+    padding: 4px !important;
+  }
+
+  .qr-content {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .qr-content svg {
+    width: 100px !important;
+    height: 100px !important;
+    display: block !important;
+  }
+
+  .metadata-content {
+    text-align: center;
+    padding: 0;
+  }
+
+  .metadata-content h2 {
+    margin: 0 0 2px 0;
+    font-size: 9px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .metadata-content .artist {
+    margin: 1px 0;
+    font-size: 8px;
+    color: #bbb;
+  }
+
+  .metadata-content .year {
+    margin: 1px 0;
+    font-size: 7px;
+    color: #888;
+  }
+}
+
+/* Screen Display - Show as preview */
+.print-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  background-color: #0f0f0f;
+}
+
+.card-page {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #333;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.card-side {
+  width: 100%;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px dashed #444;
+}
+
+.card-side:last-child {
+  border-bottom: none;
+}
+
+.qr-side {
+  background-color: #1a1a1a;
+}
+
+.metadata-side {
+  background-color: #222;
+  flex-direction: column;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.qr-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metadata-content {
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.metadata-content h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  word-wrap: break-word;
+  color: #d8b3ff;
+  width: 100%;
+  text-align: center;
+}
+
+.metadata-content .artist {
+  margin: 0;
+  font-size: 16px;
+  color: #c9a3ff;
+  word-wrap: break-word;
+  width: 100%;
+  text-align: center;
+}
+
+.metadata-content .year {
+  margin: 0;
+  font-size: 16px;
+  color: #b890ff;
+  width: 100%;
+  text-align: center;
+}
+
