@@ -1,12 +1,26 @@
-import { useMemo, useState } from "react";
+import { useState, useEffect } from "react";
 import QRScanner from "../components/qr/QRScanner";
-import { buildSpotifyEmbedUrl, parseSpotifyTrackFromScan } from "../spotify/spotifyClient";
+import { parseSpotifyTrackFromScan } from "../spotify/spotifyClient";
 import { Link } from "react-router-dom";
 
 const ScanCard = () => {
   const [trackId, setTrackId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState<number | null>(null);
 
+  // Countdown timer: after 3 seconds, open Spotify.
+  useEffect(() => {
+    if (countdown === null) return;
+    if (countdown === 0) {
+      window.location.href = `spotify:track:${trackId}`;
+      return;
+    }
+    const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [countdown, trackId]);
+
+  // Parse QR and start countdown.
   const handleScan = (value: string) => {
     const parsedTrackId = parseSpotifyTrackFromScan(value);
 
@@ -18,12 +32,9 @@ const ScanCard = () => {
 
     setError(null);
     setTrackId(parsedTrackId);
+    setStatus("Flip your screen!");
+    setCountdown(3);
   };
-
-  const embedUrl = useMemo(() => {
-    if (!trackId) return null;
-    return buildSpotifyEmbedUrl(trackId);
-  }, [trackId]);
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: 24 }}>
@@ -35,23 +46,18 @@ const ScanCard = () => {
 
       <QRScanner onScan={handleScan} />
 
-      {error && (
-        <p style={{ color: "#d32f2f", marginTop: 12 }}>{error}</p>
+      {error && <p style={{ color: "#d32f2f", marginTop: 12 }}>{error}</p>}
+      {status && (
+        <div style={{ marginTop: 24, textAlign: "center" }}>
+          <p style={{ fontSize: 18, fontWeight: "bold" }}>{status}</p>
+          {countdown !== null && (
+            <p style={{ fontSize: 48, fontWeight: "bold", marginTop: 12 }}>
+              {countdown}
+            </p>
+          )}
+        </div>
       )}
 
-      {embedUrl && (
-        <section style={{ marginTop: 24 }}>
-          <h3 style={{ marginBottom: 8 }}>Now playing</h3>
-          <iframe
-            title="Spotify player"
-            src={embedUrl}
-            width="100%"
-            height="160"
-            style={{ borderRadius: 12, border: "none" }}
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          />
-        </section>
-      )}
     </main>
   );
 };

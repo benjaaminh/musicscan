@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const ngrok = process.env.NGROK_URI ?? null
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -45,6 +46,7 @@ export default defineConfig({
   ],
 
   server: {
-    host: true // Hosting for mobile device testing
+    host: true, // Hosting for mobile device testing
+    allowedHosts: ngrok ? [ngrok] : true
   }
 })
