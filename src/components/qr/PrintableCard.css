@@ -4,29 +4,18 @@
 }
 
 @media print {
-  /* Hide everything except the print container */
-  body > * {
-    display: none !important;
-  }
-  
-  body > div:has(.print-container),
-  .print-container,
-  .print-container * {
-    display: revert !important;
-  }
-
-  /* Hide the print button and headings */
-  button,
-  h2 {
-    display: none !important;
-  }
-
   /* Show print container as grid to fit multiple cards */
   .print-container {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
     gap: 4px !important;
     padding: 4px !important;
+    background: white !important;
+  }
+
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
     background: white !important;
   }
 
