@@ -153,7 +153,20 @@ const CardGeneration = () => {
   };
 
   const handleCardsGenerated = (newCards: Card[]) => {
-    setCards(newCards);
+    if (newCards.length === 0) {
+      return;
+    }
+
+    setCards((currentCards) => {
+      if (currentCards === EXAMPLE_CARDS) {
+        return newCards;
+      }
+
+      const existingUris = new Set(currentCards.map((card) => card.spotifyUri));
+      const uniqueNewCards = newCards.filter((card) => !existingUris.has(card.spotifyUri));
+
+      return [...currentCards, ...uniqueNewCards];
+    });
   };
 
   return (
