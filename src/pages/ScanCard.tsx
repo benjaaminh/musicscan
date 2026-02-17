@@ -1,26 +1,29 @@
-import { useState, useEffect } from "react";
-import QRScanner from "../components/qr/QRScanner";
-import { parseSpotifyTrackFromScan } from "../spotify/spotifyClient";
+import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
+import QRScanner from "../components/qr/QRScanner";
+import { ScanCountdown } from "../components/ScanCountdown";
+import { parseSpotifyTrackFromScan } from "../spotify/spotifyClient";
+import { useCountdown } from "../hooks/useCountdown";
+import { ErrorAlert } from "../components/common/Alert";
 
+/**
+ * Card scanning page where users can scan QR codes pointing to Spotify tracks.
+ * When a valid QR code is detected, displays a countdown and opens the track in Spotify.
+ * Supports both camera-based and file-based QR code scanning.
+ */
 const ScanCard = () => {
   const [trackId, setTrackId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
-  const [countdown, setCountdown] = useState<number | null>(null);
 
-  // Countdown timer: after 3 seconds, open Spotify.
-  useEffect(() => {
-    if (countdown === null) return;
-    if (countdown === 0) {
+  const handleCountdownComplete = useCallback(() => {
+    if (trackId) {
       window.location.href = `spotify:track:${trackId}`;
-      return;
     }
-    const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-    return () => clearTimeout(timer);
-  }, [countdown, trackId]);
+  }, [trackId]);
 
-  // Parse QR and start countdown.
+  const { countdown, start } = useCountdown(3, handleCountdownComplete);
+
   const handleScan = (value: string) => {
     const parsedTrackId = parseSpotifyTrackFromScan(value);
 
@@ -33,31 +36,22 @@ const ScanCard = () => {
     setError(null);
     setTrackId(parsedTrackId);
     setStatus("Flip your screen!");
-    setCountdown(3);
+    start();
   };
 
   return (
-    <main style={{ maxWidth: 480, margin: "0 auto", padding: 24 }}>
-      <p>
+    <main className="container-main max-w-md">
+      <p className="mb-4">
         <Link to="/">Go back</Link>
       </p>
-      <h2>Scan Card</h2>
-      <p>Scan a QR code pointing to a Spotify track to play it inline.</p>
+      <h2 className="text-2xl font-bold mb-2">Scan Card</h2>
+      <p className="text-muted mb-6">Scan a QR code pointing to a Spotify track to play it.</p>
 
       <QRScanner onScan={handleScan} />
 
-      {error && <p style={{ color: "#d32f2f", marginTop: 12 }}>{error}</p>}
-      {status && (
-        <div style={{ marginTop: 24, textAlign: "center" }}>
-          <p style={{ fontSize: 18, fontWeight: "bold" }}>{status}</p>
-          {countdown !== null && (
-            <p style={{ fontSize: 48, fontWeight: "bold", marginTop: 12 }}>
-              {countdown}
-            </p>
-          )}
-        </div>
-      )}
+      {error && <ErrorAlert message={error} />}
 
+      <ScanCountdown countdown={countdown} status={status} />
     </main>
   );
 };
