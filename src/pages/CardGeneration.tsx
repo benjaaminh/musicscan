@@ -158,14 +158,15 @@ const CardGeneration = () => {
 
   return (
     <main className="container-main">
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <p className="mb-4">
-          <Link to="/" className="text-blue-600 hover:underline">
+          <Link to="/" className="text-white/90 hover:text-sky-200 transition-colors">
             ← Go back
           </Link>
         </p>
-        <h2 className="text-3xl font-bold mb-2">Generate Cards</h2>
-        <p className="text-muted mb-6">
+        <p className="page-kicker mb-3">Deck Builder</p>
+        <h2 className="poster-title text-3xl sm:text-4xl font-bold mb-2">Generate Cards</h2>
+        <p className="text-sm sm:text-base text-muted mb-6">
           Choose cards from example library or create from your Spotify playlists
         </p>
       </div>
@@ -181,7 +182,7 @@ const CardGeneration = () => {
       {mode === "example" ? (
         <ExampleCardsView cards={cards} />
       ) : (
-        <div className="section">
+        <div className="section space-y-4">
           <MusicLibrarySelector onCardsGenerated={handleCardsGenerated} />
           <GeneratedCardsView cards={cards} exampleCards={EXAMPLE_CARDS} />
         </div>

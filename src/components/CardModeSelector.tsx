@@ -26,10 +26,10 @@ export const CardModeSelector: React.FC<CardModeSelectorProps> = ({
   onLogout,
 }) => {
   return (
-    <div className="flex flex-wrap gap-3 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
       <button
         onClick={() => onModeChange("example")}
-        className={`btn ${
+        className={`w-full btn ${
           mode === "example"
             ? "btn-info"
             : "btn-secondary"
@@ -39,10 +39,10 @@ export const CardModeSelector: React.FC<CardModeSelectorProps> = ({
       </button>
       <button
         onClick={spotifyAuthenticated ? () => onModeChange("spotify") : onConnect}
-        className={`btn ${
+        className={`w-full btn ${
           spotifyAuthenticated
             ? mode === "spotify"
-              ? "bg-green-600 text-white hover:bg-green-700"
+              ? "btn-info"
               : "btn-secondary"
             : "btn-primary"
         }`}
@@ -52,7 +52,7 @@ export const CardModeSelector: React.FC<CardModeSelectorProps> = ({
       {spotifyAuthenticated && (
         <button
           onClick={onLogout}
-          className="btn btn-danger"
+          className="w-full btn btn-danger"
         >
           Logout Spotify
         </button>

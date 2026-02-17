@@ -8,7 +8,7 @@ export const PrintButton: React.FC<PrintButtonProps> = ({ onPrint }) => {
   return (
     <button
       onClick={onPrint}
-      className="btn btn-info mb-4"
+      className="btn btn-info w-full sm:w-auto mb-4"
     >
       Print Cards
     </button>

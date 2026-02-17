@@ -40,12 +40,13 @@ const ScanCard = () => {
   };
 
   return (
-    <main className="container-main max-w-md">
+    <main className="container-main max-w-xl">
       <p className="mb-4">
-        <Link to="/">Go back</Link>
+        <Link to="/" className="text-white/90 hover:text-sky-200 transition-colors">← Go back</Link>
       </p>
-      <h2 className="text-2xl font-bold mb-2">Scan Card</h2>
-      <p className="text-muted mb-6">Scan a QR code pointing to a Spotify track to play it.</p>
+      <p className="page-kicker mb-3">Quick Scan</p>
+      <h2 className="poster-title text-3xl sm:text-4xl font-bold mb-2">Scan Card</h2>
+      <p className="text-sm sm:text-base text-muted mb-6">Scan a QR code pointing to a Spotify track to play it.</p>
 
       <QRScanner onScan={handleScan} />
 

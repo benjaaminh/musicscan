@@ -8,14 +8,14 @@ import React from "react";
  * @prop onFileSelect - Callback when user selects a file
  */
 interface FileScannerProps {
-  fileInputRef: React.RefObject<HTMLInputElement>;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
   onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const FileScanner: React.FC<FileScannerProps> = ({ fileInputRef, onFileSelect }) => {
   return (
-    <div className="mt-4">
-      <label htmlFor="qr-file-input" className="block text-sm font-medium text-text-primary mb-2">
+    <div className="mt-4 card p-4">
+      <label htmlFor="qr-file-input" className="block text-sm font-medium text-slate-200 mb-2">
         Or upload a QR code image:
       </label>
       <input
@@ -24,12 +24,12 @@ export const FileScanner: React.FC<FileScannerProps> = ({ fileInputRef, onFileSe
         type="file"
         accept="image/*"
         onChange={onFileSelect}
-        className="block w-full text-sm text-gray-500
-          file:mr-4 file:py-2 file:px-4
+        className="block w-full text-sm text-slate-300
+          file:mr-3 file:py-2.5 file:px-4
           file:rounded-lg file:border-0
           file:text-sm file:font-semibold
-          file:bg-green-500 file:text-white
-          hover:file:bg-green-600 file:cursor-pointer file:transition-colors"
+          file:bg-sky-600 file:text-white
+          hover:file:bg-sky-500 file:cursor-pointer file:transition-colors"
       />
     </div>
   );

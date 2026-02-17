@@ -100,29 +100,31 @@
 /* Screen Display - Show as preview */
 .print-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-  padding: 20px;
-  background-color: #0f0f0f;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.28);
 }
 
 .card-page {
   display: flex;
   flex-direction: column;
-  border: 2px solid #333;
+  border: 2px solid rgba(255, 255, 255, 0.4);
   border-radius: 16px;
   overflow: hidden;
-  background: #1a1a1a;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  background: #000;
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.45);
 }
 
 .card-side {
   width: 100%;
-  height: 220px;
+  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px dashed #444;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.35);
 }
 
 .card-side:last-child {
@@ -130,11 +132,11 @@
 }
 
 .qr-side {
-  background-color: #1a1a1a;
+  background-color: #000;
 }
 
 .metadata-side {
-  background-color: #222;
+  background: linear-gradient(135deg, #111827, #1f2937 48%, #1e3a8a);
   flex-direction: column;
   padding: 16px;
   display: flex;
@@ -149,6 +151,11 @@
   justify-content: center;
 }
 
+.qr-content svg {
+  width: min(42vw, 180px);
+  height: min(42vw, 180px);
+}
+
 .metadata-content {
   text-align: center;
   width: 100%;
@@ -161,18 +168,20 @@
 
 .metadata-content h2 {
   margin: 0;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   word-wrap: break-word;
-  color: #d8b3ff;
+  color: #fff;
   width: 100%;
   text-align: center;
 }
 
 .metadata-content .artist {
   margin: 0;
-  font-size: 16px;
-  color: #c9a3ff;
+  font-size: 14px;
+  color: #cbd5e1;
   word-wrap: break-word;
   width: 100%;
   text-align: center;
@@ -180,9 +189,24 @@
 
 .metadata-content .year {
   margin: 0;
-  font-size: 16px;
-  color: #b890ff;
+  font-size: 14px;
+  color: #fff;
   width: 100%;
   text-align: center;
+}
+
+@media (max-width: 640px) {
+  .print-container {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+
+  .card-side {
+    height: 160px;
+  }
+
+  .metadata-side {
+    padding: 12px;
+  }
 }
 

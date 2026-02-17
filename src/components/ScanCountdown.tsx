@@ -16,10 +16,10 @@ export const ScanCountdown: React.FC<ScanCountdownProps> = ({ countdown, status 
   if (!status) return null;
 
   return (
-    <div style={{ marginTop: 24, textAlign: "center" }}>
-      <p style={{ fontSize: 18, fontWeight: "bold" }}>{status}</p>
+    <div className="mt-6 text-center">
+      <p className="text-lg font-bold">{status}</p>
       {countdown !== null && (
-        <p style={{ fontSize: 48, fontWeight: "bold", marginTop: 12 }}>
+        <p className="text-5xl font-bold mt-3">
           {countdown}
         </p>
       )}

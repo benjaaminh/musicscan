@@ -51,7 +51,7 @@ export const PlaylistPickerGrid: React.FC<PlaylistPickerGridProps> = ({
   if (loading) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">Loading...</p>
+        <p className="text-white/70">Loading...</p>
       </div>
     );
   }
@@ -64,26 +64,26 @@ export const PlaylistPickerGrid: React.FC<PlaylistPickerGridProps> = ({
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
         <h3 className="text-lg font-semibold">
           {showUserPlaylists ? "Your Playlists" : "Playlists"}
         </h3>
         <select
           value={sortBy}
           onChange={(e) => onSortChange(e.target.value as "popularity" | "name")}
-          className="input-base text-sm w-auto"
+          className="input-base text-sm w-full sm:w-auto"
         >
           <option value="popularity">Sort: Most Popular</option>
           <option value="name">Sort: Name</option>
         </select>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {sorted.map((playlist) => (
           <div
             key={playlist.id}
             className={`card p-4 cursor-pointer ${
               selectedPlaylistIds.includes(playlist.id)
-                ? "border-green-500 bg-green-50"
+                ? "border-slate-300 bg-slate-300/10"
                 : "hover:shadow-md"
             }`}
             onClick={() => onToggle(playlist)}
@@ -101,12 +101,12 @@ export const PlaylistPickerGrid: React.FC<PlaylistPickerGridProps> = ({
             </p>
             <div className="flex justify-between items-center mb-2">
               <p className="text-xs text-muted">{playlist.tracks?.total || 0} tracks</p>
-              <p className="text-xs font-medium text-red-500">
+              <p className="text-xs font-medium text-sky-300">
                 {((playlist.popularity?.total) || 0).toLocaleString()} followers
               </p>
             </div>
             {selectedPlaylistIds.includes(playlist.id) && (
-              <p className="text-xs text-green-600 mt-2 font-semibold">Selected</p>
+              <p className="text-xs text-sky-200 mt-2 font-semibold">Selected</p>
             )}
           </div>
         ))}

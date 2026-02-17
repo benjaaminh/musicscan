@@ -6,15 +6,16 @@ import { Link } from "react-router-dom";
  */
 const Home = () => {
   return (
-    <main className="container-main flex items-center justify-center min-h-screen">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Music QR Game</h1>
-        <p className="text-lg text-muted mb-8">Create and scan Spotify track QR codes</p>
+    <main className="container-main min-h-[100dvh] flex items-center justify-center">
+      <div className="w-full max-w-md text-center">
+        <p className="page-kicker mb-3">Local Party Edition</p>
+        <h1 className="poster-title text-4xl sm:text-5xl font-bold mb-3">Music QR Game</h1>
+        <p className="text-base sm:text-lg text-muted mb-8">Create and scan Spotify track QR cards</p>
         <nav className="space-y-3">
           <div>
             <Link
               to="/generate"
-              className="inline-block btn btn-info px-6 py-3 text-lg"
+              className="w-full btn btn-info text-base"
             >
               Generate Cards
             </Link>
@@ -22,7 +23,7 @@ const Home = () => {
           <div>
             <Link
               to="/scan"
-              className="inline-block btn btn-secondary px-6 py-3 text-lg"
+              className="w-full btn btn-secondary text-base"
             >
               Scan Card
             </Link>

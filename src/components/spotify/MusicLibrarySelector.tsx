@@ -127,7 +127,7 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
   }
 
   return (
-    <div className="section">
+    <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <LibraryPlaylistsButton
           onClick={() => loadUserPlaylists()}
@@ -147,7 +147,7 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
 
       <div className="card p-4 mt-4">
         <h3 className="text-lg font-semibold mb-3">Search Tracks</h3>
-        <form onSubmit={handleSearchTracks} className="flex gap-2">
+        <form onSubmit={handleSearchTracks} className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             placeholder="Search for tracks or artists..."
@@ -158,7 +158,7 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
           <button
             type="submit"
             disabled={loading || !trackQuery.trim()}
-            className="btn btn-primary"
+            className="btn btn-primary w-full sm:w-auto"
           >
             Search
           </button>
@@ -167,7 +167,7 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
 
       <div className="card p-4 mt-4">
         <h3 className="text-lg font-semibold mb-3">Search Albums</h3>
-        <form onSubmit={handleSearchAlbums} className="flex gap-2">
+        <form onSubmit={handleSearchAlbums} className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             placeholder="Search for albums or compilations..."
@@ -178,7 +178,7 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
           <button
             type="submit"
             disabled={loading || !albumQuery.trim()}
-            className="btn btn-primary"
+            className="btn btn-primary w-full sm:w-auto"
           >
             Search
           </button>
@@ -200,13 +200,13 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
       {trackResults.length > 0 && (
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-3">Track Results</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {trackResults.map((track) => (
               <div
                 key={track.id}
                 className={`card p-4 cursor-pointer ${
                   selectedTracks.some((selected) => selected.id === track.id)
-                    ? "border-green-500 bg-green-50"
+                    ? "border-slate-300 bg-slate-300/10"
                     : "hover:shadow-md"
                 }`}
                 onClick={() => handleToggleTrack(track.id)}
@@ -219,7 +219,7 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
                   {track.album?.name ?? "Unknown album"}
                 </p>
                 {selectedTracks.some((selected) => selected.id === track.id) && (
-                  <p className="text-xs text-green-600 mt-2 font-semibold">Selected</p>
+                  <p className="text-xs text-sky-200 mt-2 font-semibold">Selected</p>
                 )}
               </div>
             ))}
@@ -244,13 +244,13 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
       {albumResults.length > 0 && (
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-3">Album Results</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {albumResults.map((album) => (
               <div
                 key={album.id}
                 className={`card p-4 cursor-pointer ${
                   selectedAlbums.some((selected) => selected.id === album.id)
-                    ? "border-green-500 bg-green-50"
+                    ? "border-slate-300 bg-slate-300/10"
                     : "hover:shadow-md"
                 }`}
                 onClick={() => handleToggleAlbum(album.id)}
@@ -268,7 +268,7 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
                 </p>
                 <p className="text-xs text-muted">{album.total_tracks || 0} tracks</p>
                 {selectedAlbums.some((selected) => selected.id === album.id) && (
-                  <p className="text-xs text-green-600 mt-2 font-semibold">Selected</p>
+                  <p className="text-xs text-sky-200 mt-2 font-semibold">Selected</p>
                 )}
               </div>
             ))}
