@@ -15,7 +15,6 @@ export {
 
 // API functions
 export {
-  getSpotifyPlaylist,
   getPlaylistTracks,
   searchSpotifyTracks,
   searchSpotifyAlbums,

@@ -31,14 +31,13 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
     showUserPlaylists,
     searchTracks,
     searchAlbums,
-    loadUserPlaylists,
+    toggleUserPlaylists,
     loadSavedTracks,
     selectPlaylists,
     selectAlbums,
   } = useMusicLibrary(accessToken);
   const { buildCardsFromTracks } = useCardBuilder();
 
-  const [sortBy, setSortBy] = useState<"popularity" | "name">("name");
   const [trackQuery, setTrackQuery] = useState("");
   const [albumQuery, setAlbumQuery] = useState("");
 
@@ -49,12 +48,6 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
     } else {
       setSelectedPlaylists([...selectedPlaylists, playlist]);
     }
-  };
-
-  const handleGenerateFromSelected = async () => {
-    if (selectedPlaylists.length === 0) return;
-    const cards = await selectPlaylists(selectedPlaylists);
-    onCardsGenerated(cards);
   };
 
   const handleGenerateFromSavedTracks = async () => {
@@ -82,11 +75,6 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
     }
   };
 
-  const handleGenerateFromSelectedTracks = () => {
-    if (selectedTracks.length === 0) return;
-    const cards = buildCardsFromTracks(selectedTracks);
-    onCardsGenerated(cards);
-  };
 
   const handleSearchAlbums = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,10 +94,49 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
     }
   };
 
-  const handleGenerateFromSelectedAlbums = async () => {
-    if (selectedAlbums.length === 0) return;
-    const cards = await selectAlbums(selectedAlbums);
-    onCardsGenerated(cards);
+  const handleGenerateFromAll = async () => {
+    const allCards: Card[] = [];
+
+    // Generate from selected playlists
+    if (selectedPlaylists.length > 0) {
+      const playlistCards = await selectPlaylists(selectedPlaylists);
+      allCards.push(...playlistCards);
+    }
+
+    // Generate from selected tracks
+    if (selectedTracks.length > 0) {
+      const trackCards = buildCardsFromTracks(selectedTracks);
+      allCards.push(...trackCards);
+    }
+
+    // Generate from selected albums
+    if (selectedAlbums.length > 0) {
+      const albumCards = await selectAlbums(selectedAlbums);
+      allCards.push(...albumCards);
+    }
+
+    // Generate all cards at once
+    if (allCards.length > 0) {
+      onCardsGenerated(allCards);
+    }
+  };
+
+  const getTotalSelectionsCount = () => {
+    return selectedPlaylists.length + selectedTracks.length + selectedAlbums.length;
+  };
+
+  const getSelectionsDescription = () => {
+    const descriptions = [];
+    if (selectedPlaylists.length > 0) {
+      descriptions.push(`${selectedPlaylists.length} playlist${selectedPlaylists.length > 1 ? 's' : ''}`);
+    }
+    if (selectedTracks.length > 0) {
+      descriptions.push(`${selectedTracks.length} track${selectedTracks.length > 1 ? 's' : ''}`);
+    }
+    if (selectedAlbums.length > 0) {
+      descriptions.push(`${selectedAlbums.length} album${selectedAlbums.length > 1 ? 's' : ''}`);
+    }
+    return descriptions.join(', ');
   };
 
   if (!accessToken) {
@@ -129,7 +156,7 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <LibraryPlaylistsButton
-          onClick={() => loadUserPlaylists()}
+          onClick={toggleUserPlaylists}
           loading={loading}
           isActive={showUserPlaylists}
         />
@@ -186,15 +213,15 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
 
       {error && <ErrorAlert message={error} />}
 
-      <PlaylistPickerGrid
-        playlists={playlists}
-        selectedPlaylistIds={selectedPlaylists.map((playlist) => playlist.id)}
-        onToggle={handleTogglePlaylist}
-        loading={loading}
-        showUserPlaylists={showUserPlaylists}
-        sortBy={sortBy}
-        onSortChange={setSortBy}
-      />
+      {showUserPlaylists && (
+        <PlaylistPickerGrid
+          playlists={playlists}
+          selectedPlaylistIds={selectedPlaylists.map((playlist) => playlist.id)}
+          onToggle={handleTogglePlaylist}
+          loading={loading}
+          showUserPlaylists={showUserPlaylists}
+        />
+      )}
 
       {trackResults.length > 0 && (
         <div className="mt-6">
@@ -227,14 +254,6 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
           {selectedTracks.length > 0 && (
             <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <Alert message={`Selected ${selectedTracks.length} tracks`} variant="success" />
-              <button
-                type="button"
-                className="btn btn-primary w-full sm:w-auto"
-                disabled={loading}
-                onClick={handleGenerateFromSelectedTracks}
-              >
-                Generate Cards
-              </button>
             </div>
           )}
         </div>
@@ -276,14 +295,6 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
           {selectedAlbums.length > 0 && (
             <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <Alert message={`Selected ${selectedAlbums.length} albums`} variant="success" />
-              <button
-                type="button"
-                className="btn btn-primary w-full sm:w-auto"
-                disabled={loading}
-                onClick={handleGenerateFromSelectedAlbums}
-              >
-                Generate Cards
-              </button>
             </div>
           )}
         </div>
@@ -295,17 +306,22 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
         </div>
       )}
 
-      {selectedPlaylists.length > 0 && (
-        <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <Alert message={`Selected ${selectedPlaylists.length} playlists`} variant="success" />
-          <button
-            type="button"
-            className="btn btn-primary w-full sm:w-auto"
-            disabled={loading}
-            onClick={handleGenerateFromSelected}
-          >
-            Generate Cards
-          </button>
+      {getTotalSelectionsCount() > 0 && (
+        <div className="mt-6 card p-4 bg-slate-800/50 border border-slate-700">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-sm text-slate-300 mb-1">Selected for card generation:</p>
+              <p className="text-lg font-semibold text-sky-300">{getSelectionsDescription()}</p>
+            </div>
+            <button
+              type="button"
+              className="btn btn-primary w-full sm:w-auto"
+              disabled={loading}
+              onClick={handleGenerateFromAll}
+            >
+              Generate Cards
+            </button>
+          </div>
         </div>
       )}
     </div>

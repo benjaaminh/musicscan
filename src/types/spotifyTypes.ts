@@ -29,8 +29,7 @@ export type SpotifyPlaylist = {
   name: string;
   images: Array<{ url: string }>;
   owner: { display_name: string };
-  tracks: { total: number };
-  popularity?: { total: number };
+  items: { total: number };
   external_urls: { spotify: string };
 };
 
@@ -48,5 +47,4 @@ export type SpotifyTrack = {
   name: string;
   artists: Array<{ name: string }>;
   album: { name: string; release_date: string };
-  duration_ms: number;
 };

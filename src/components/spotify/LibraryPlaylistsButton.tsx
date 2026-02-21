@@ -25,7 +25,7 @@ export const LibraryPlaylistsButton: React.FC<LibraryPlaylistsButtonProps> = ({
         disabled={loading}
         className={`w-full btn ${isActive ? "btn-info" : "btn-secondary"}`}
       >
-        {isActive ? "User Playlists" : "View Your Playlists"}
+        {isActive ? "Hide Playlists" : "Show Your Playlists"}
       </button>
     </div>
   );

@@ -3,40 +3,6 @@
 import type { SpotifyAlbum, SpotifyPlaylist, SpotifyTrack } from "../types/spotifyTypes";
 
 /**
- * Fetches a specific playlist's metadata from Spotify API.
- * Retrieves playlist details including name, owner, follower count, and images.
- *
- * @param accessToken - Spotify API access token
- * @param playlistId - The Spotify playlist ID to fetch
- * @returns Promise resolving to playlist metadata object
- * @throws Error if playlist fetch fails
- */
-export const getSpotifyPlaylist = async (
-  accessToken: string,
-  playlistId: string
-): Promise<SpotifyPlaylist> => {
-  const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch playlist");
-  }
-
-  const data = await response.json();
-
-  return {
-    id: data.id,
-    name: data.name,
-    images: data.images || [],
-    owner: data.owner || { display_name: "Unknown" },
-    tracks: { total: data.items?.total || data.tracks?.total || 0 },
-    popularity: data.popularity || { total: 0 },
-    external_urls: data.external_urls || {},
-  } as SpotifyPlaylist;
-};
-
-/**
  * Fetches all tracks from a playlist
  *
  * @param accessToken - Spotify API access token
@@ -123,7 +89,6 @@ export const searchSpotifyTracks = async (
 
 /**
  * Searches for albums on Spotify by query string.
- * Returns minimal album fields needed for track fetching.
  *
  * @param accessToken - Spotify API access token
  * @param query - Search query string (e.g., 'greatest hits', 'best of')
@@ -213,7 +178,6 @@ export const getAlbumTracks = async (
       name: item.name,
       artists: item.artists ?? [],
       album: albumInfo,
-      duration_ms: item.duration_ms ?? 0,
     }));
 
     tracks.push(...validTracks);

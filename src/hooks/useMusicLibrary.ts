@@ -86,6 +86,14 @@ export const useMusicLibrary = (accessToken: string | null) => {
     }
   }, [accessToken]);
 
+  const toggleUserPlaylists = useCallback(async () => {
+    if (showUserPlaylists) {
+      setShowUserPlaylists(false);
+    } else {
+      await loadUserPlaylists();
+    }
+  }, [showUserPlaylists, loadUserPlaylists]);
+
   const loadSavedTracks = useCallback(async (): Promise<Card[]> => {
     if (!accessToken) return [];
 
@@ -206,6 +214,7 @@ export const useMusicLibrary = (accessToken: string | null) => {
     searchTracks,
     searchAlbums,
     loadUserPlaylists,
+    toggleUserPlaylists,
     loadSavedTracks,
     selectPlaylists,
     selectAlbums,
