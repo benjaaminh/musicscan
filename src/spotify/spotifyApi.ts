@@ -1,42 +1,6 @@
 // Spotify API calls for tracks, playlists, and search
 
-import type { SpotifyAlbum, SpotifyPlaylist, SpotifyTrack, SpotifyTrackInfo } from "./spotifyTypes";
-
-/**
- * Fetches track metadata from Spotify API.
- * Retrieves track name, artists, album, release year, and duration.
- *
- * @param accessToken - Spotify API access token
- * @param trackId - The Spotify track ID to fetch
- * @returns Promise resolving to track metadata object
- * @throws Error if track fetch fails
- */
-export const fetchSpotifyTrackInfo = async (
-  accessToken: string,
-  trackId: string
-): Promise<SpotifyTrackInfo> => {
-  const response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-
-  if (!response.ok) {
-    throw new Error("Unable to load track info.");
-  }
-
-  const data = await response.json();
-  const releaseDate = typeof data.album?.release_date === "string" ? data.album.release_date : "";
-  const releaseYear = releaseDate ? releaseDate.split("-")[0] : "Unknown";
-
-  return {
-    id: data.id,
-    name: data.name,
-    artists: Array.isArray(data.artists)
-      ? data.artists.map((artist: { name: string }) => artist.name)
-      : [],
-    album: data.album?.name ?? "",
-    releaseYear
-  };
-};
+import type { SpotifyAlbum, SpotifyPlaylist, SpotifyTrack } from "../types/spotifyTypes";
 
 /**
  * Fetches a specific playlist's metadata from Spotify API.

@@ -79,8 +79,8 @@
 
   .metadata-content h2 {
     margin: 0 0 2px 0;
-    font-size: 9px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
     color: #fff;
   }
 
@@ -168,7 +168,7 @@
 
 .metadata-content h2 {
   margin: 0;
-  font-size: 16px;
+  font-size: 36px;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;

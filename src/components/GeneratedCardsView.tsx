@@ -5,18 +5,16 @@ import type { Card } from "../types/Card";
 /**
  * View component for displaying user-generated game cards from Spotify.
  * Shows cards generated from a selected Spotify playlist.
- * Only renders if cards have been generated (different from example cards).
+ * Only renders if cards have been generated.
  *
  * @prop cards - Array of user-generated cards to display
- * @prop exampleCards - Array of example cards (used for comparison)
  */
 interface GeneratedCardsViewProps {
   cards: Card[];
-  exampleCards: Card[];
 }
 
-export const GeneratedCardsView: React.FC<GeneratedCardsViewProps> = ({ cards, exampleCards }) => {
-  if (cards.length === 0 || cards === exampleCards) {
+export const GeneratedCardsView: React.FC<GeneratedCardsViewProps> = ({ cards }) => {
+  if (cards.length === 0) {
     return null;
   }
 

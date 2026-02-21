@@ -7,7 +7,7 @@ import { ErrorAlert } from "../common/Alert";
  * Main QR code scanner component.
  * Provides two ways to scan: camera-based scanning or file upload.
  *
- * @prop onScan - Callback function triggered when a QR code is successfully scanned
+ * @prop onScan - Function triggered when a QR code is successfully scanned
  */
 type Props = {
   onScan: (text: string) => void;

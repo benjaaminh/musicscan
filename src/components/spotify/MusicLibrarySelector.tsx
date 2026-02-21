@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useSpotifyAuth } from "../../hooks/useSpotifyAuth";
 import { useMusicLibrary } from "../../hooks/useMusicLibrary";
 import { useCardBuilder } from "../../hooks/useCardBuilder";
 import { LibraryPlaylistsButton } from "./LibraryPlaylistsButton";
@@ -13,10 +12,10 @@ import type { Card } from "../../types/Card";
  */
 interface MusicLibrarySelectorProps {
   onCardsGenerated: (cards: Card[]) => void;
+  accessToken: string | null;
 }
 
-const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGenerated }) => {
-  const { accessToken } = useSpotifyAuth();
+const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGenerated, accessToken }) => {
   const {
     playlists,
     selectedPlaylists,

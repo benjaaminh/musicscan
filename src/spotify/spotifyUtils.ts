@@ -1,6 +1,6 @@
 // Utilities for cryptographic operations and config management
 
-import type { SpotifyConfig } from "./spotifyTypes";
+import type { SpotifyConfig } from "../types/spotifyTypes";
 
 /**
  * Converts raw bytes into base64url (safe for URLs and PKCE).

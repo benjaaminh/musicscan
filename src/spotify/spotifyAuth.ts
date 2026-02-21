@@ -5,7 +5,7 @@ import {
   SPOTIFY_PKCE_VERIFIER_KEY,
   SPOTIFY_PKCE_VERIFIER_FALLBACK_KEY,
   type StoredSpotifyAuth,
-} from "./spotifyTypes";
+} from "../types/spotifyTypes";
 import {
   generateCodeVerifier,
   generateCodeChallenge,

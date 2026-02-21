@@ -22,13 +22,3 @@ export const parseSpotifyTrackFromScan = (value: string): string | null => {
 
   return null;
 };
-
-/**
- * Builds the embeddable Spotify player URL for a track.
- * Used to display an interactive Spotify player widget in the app.
- *
- * @param trackId - The Spotify track ID
- * @returns The full URL to the embedded Spotify player for this track
- */
-export const buildSpotifyEmbedUrl = (trackId: string): string =>
-  `https://open.spotify.com/embed/track/${trackId}?utm_source=qr_player`;

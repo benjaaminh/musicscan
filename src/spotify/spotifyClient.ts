@@ -1,7 +1,7 @@
 // Re-export everything from specialized modules for backward compatibility
 
 // Types
-export type { SpotifyTrackInfo, SpotifyPlaylist, SpotifyTrack, SpotifyAlbum } from "./spotifyTypes";
+export type { SpotifyTrackInfo, SpotifyPlaylist, SpotifyTrack, SpotifyAlbum } from "../types/spotifyTypes";
 
 // Auth functions
 export { 
@@ -15,7 +15,6 @@ export {
 
 // API functions
 export {
-  fetchSpotifyTrackInfo,
   getSpotifyPlaylist,
   getPlaylistTracks,
   searchSpotifyTracks,
@@ -28,5 +27,4 @@ export {
 // Parsing functions
 export {
   parseSpotifyTrackFromScan,
-  buildSpotifyEmbedUrl,
 } from "./spotifyParser";
