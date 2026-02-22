@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'Music Game',
-        short_name: 'MusicGame',
-        description: 'A music game with QR code cards',
+        name: 'MusicScan',
+        short_name: 'MusicScan',
+        description: 'QR-code based music card generation and scanning',
         theme_color: '#1a1a1a',
         background_color: '#242424',
         display: 'standalone',

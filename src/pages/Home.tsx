@@ -9,7 +9,7 @@ const Home = () => {
     <main className="container-main min-h-[100dvh] flex items-center justify-center">
       <div className="w-full max-w-md text-center">
         <p className="page-kicker mb-3">Local Edition</p>
-        <h1 className="poster-title text-4xl sm:text-5xl font-bold mb-3">Music QR Game</h1>
+        <h1 className="poster-title text-4xl sm:text-5xl font-bold mb-3">Music QR Scanning and Generation</h1>
         <p className="text-base sm:text-lg text-muted mb-8">Create and scan Spotify track QR cards</p>
         <nav className="space-y-3">
           <div>
@@ -17,7 +17,7 @@ const Home = () => {
               to="/generate"
               className="w-full btn btn-info text-base"
             >
-              Generate Cards
+              Generate Cards (Spotify Premium Required)
             </Link>
           </div>
           <div>

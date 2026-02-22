@@ -3,7 +3,7 @@ import PrintableCard from "./qr/PrintableCard";
 import type { Card } from "../types/Card";
 
 /**
- * View component for displaying user-generated game cards from Spotify.
+ * View component for displaying user-generated cards from Spotify.
  * Shows cards generated from a selected Spotify playlist.
  * Only renders if cards have been generated.
  *

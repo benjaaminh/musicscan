@@ -3,11 +3,11 @@ import QRCode from "react-qr-code";
 import type { Card } from "../../types/Card";
 
 /**
- * Individual game card component displaying a QR code with track metadata.
+ * Individual card component displaying a QR code with track metadata.
  * Shows the QR code on one side and track info (year, title, artist) on the other.
  * Designed for printing.
  *
- * @prop card - The game card object containing QR data and metadata
+ * @prop card - The card object containing QR data and metadata
  */
 interface CardProps {
   card: Card;

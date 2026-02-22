@@ -19,11 +19,42 @@ export const useQRScanner = (onScan: (text: string) => void) => {
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const hasScannedRef = useRef(false);
+  const scanCooldownTimeoutRef = useRef<number | null>(null);
   const isStartedRef = useRef(false);
 
   const [isStarted, setIsStarted] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // tries to find the back camera on all devices
+  const pickPreferredBackCameraId = useCallback(
+    (cameras: Array<{ id: string; label: string }>): string | undefined => {
+      if (!cameras.length) return undefined;
+
+      const rearKeywords = ["back", "rear", "environment", "world"];
+      const frontKeywords = ["front", "user", "selfie", "facetime"];
+
+      const labeled = cameras.map((camera) => ({
+        ...camera,
+        labelLower: camera.label.toLowerCase(),
+      }));
+
+      const rearCamera = labeled.find((camera) =>
+        rearKeywords.some((keyword) => camera.labelLower.includes(keyword))
+      );
+
+      if (rearCamera) {
+        return rearCamera.id;
+      }
+
+      const nonFrontCamera = labeled.find(
+        (camera) => !frontKeywords.some((keyword) => camera.labelLower.includes(keyword))
+      );
+
+      return nonFrontCamera?.id ?? cameras[0]?.id;
+    },
+    []
+  );
 
   const ensureScanner = useCallback(() => {
     if (!scannerRef.current) {
@@ -41,8 +72,13 @@ export const useQRScanner = (onScan: (text: string) => void) => {
     } catch {
       // Ignore stop failures
     } finally {
+      if (scanCooldownTimeoutRef.current !== null) {
+        window.clearTimeout(scanCooldownTimeoutRef.current);
+        scanCooldownTimeoutRef.current = null;
+      }
       setIsStarted(false);
       isStartedRef.current = false;
+      hasScannedRef.current = false;
     }
   }, []);
 
@@ -55,8 +91,7 @@ export const useQRScanner = (onScan: (text: string) => void) => {
     try {
       const scanner = ensureScanner();
       const cameras = await Html5Qrcode.getCameras();
-      // Back camera
-      const cameraId = cameras?.length ? cameras[cameras.length - 1].id : undefined;
+      const cameraId = pickPreferredBackCameraId(cameras ?? []);
       const constraints = cameraId
         ? { deviceId: { exact: cameraId } }
         : { facingMode: "environment" };
@@ -68,7 +103,17 @@ export const useQRScanner = (onScan: (text: string) => void) => {
           if (hasScannedRef.current) return;
           hasScannedRef.current = true;
           onScan(text);
-          void stopScanner();
+
+          if (scanCooldownTimeoutRef.current !== null) {
+            window.clearTimeout(scanCooldownTimeoutRef.current);
+          }
+
+          // Keep camera running for seamless rescans, but throttle duplicate detections
+          // while the same QR code remains in view.
+          scanCooldownTimeoutRef.current = window.setTimeout(() => {
+            hasScannedRef.current = false;
+            scanCooldownTimeoutRef.current = null;
+          }, 3500);
         },
         (scanError) => {
           const message = String(scanError ?? "");
@@ -85,7 +130,7 @@ export const useQRScanner = (onScan: (text: string) => void) => {
     } finally {
       setIsInitializing(false);
     }
-  }, [ensureScanner, isInitializing, isStarted, onScan, stopScanner]);
+  }, [ensureScanner, isInitializing, isStarted, onScan, pickPreferredBackCameraId, stopScanner]);
 
   const handleFileSelect = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
@@ -110,6 +155,9 @@ export const useQRScanner = (onScan: (text: string) => void) => {
 
   useEffect(() => {
     return () => {
+      if (scanCooldownTimeoutRef.current !== null) {
+        window.clearTimeout(scanCooldownTimeoutRef.current);
+      }
       void stopScanner();
     };
   }, [stopScanner]);

@@ -5,10 +5,10 @@ import type { Card } from "../../types/Card";
 import "./PrintableCard.css";
 
 /**
- * Container component for displaying and printing game cards.
+ * Container component for displaying and printing QR cards.
  * Shows all cards in a print-friendly layout and provides print functionality.
  *
- * @prop cards - Array of game cards to display
+ * @prop cards - Array of QR cards to display
  */
 type Props = {
   cards: Card[];

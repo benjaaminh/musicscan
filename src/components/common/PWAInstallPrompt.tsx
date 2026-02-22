@@ -5,7 +5,7 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 }
 
-const DISMISS_KEY = "musicgame-install-dismissed-until";
+const DISMISS_KEY = "musicscan-install-dismissed-until";
 const DISMISS_DURATION_MS = 24 * 60 * 60 * 1000;
 
 const isStandaloneMode = () => {
@@ -79,7 +79,7 @@ export const PWAInstallPrompt = () => {
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       <div className="mx-auto max-w-md card p-3">
-        <p className="text-sm text-white mb-3">Install Music Game and play it like a full-screen app.</p>
+        <p className="text-sm text-white mb-3">Install and play it like a full-screen app.</p>
         <div className="flex items-center gap-2">
           <button type="button" className="btn btn-info flex-1" onClick={handleInstall}>
             Install
