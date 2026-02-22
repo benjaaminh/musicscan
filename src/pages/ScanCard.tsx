@@ -15,6 +15,7 @@ const ScanCard = () => {
   const [trackId, setTrackId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  const [showCountdown, setShowCountdown] = useState(true);
 
   const handleCountdownComplete = useCallback(() => {
     if (trackId) {
@@ -22,7 +23,7 @@ const ScanCard = () => {
     }
   }, [trackId]);
 
-  const { countdown, start } = useCountdown(3, handleCountdownComplete);
+  const { countdown, start, stop } = useCountdown(3, handleCountdownComplete);
 
   const handleScan = (value: string) => {
     const parsedTrackId = parseSpotifyTrackFromScan(value);
@@ -41,6 +42,12 @@ const ScanCard = () => {
 
   return (
     <main className="container-main max-w-xl">
+      {showCountdown && status && countdown !== null && (
+        <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
+          <ScanCountdown countdown={countdown} status={status} />
+        </div>
+      )}
+
       <p className="mb-4">
         <Link to="/" className="text-white/90 hover:text-sky-200 transition-colors">← Go back</Link>
       </p>
@@ -48,11 +55,27 @@ const ScanCard = () => {
       <h2 className="poster-title text-3xl sm:text-4xl font-bold mb-2">Scan Card</h2>
       <p className="text-sm sm:text-base text-muted mb-6">Scan a QR code pointing to a Spotify track to play it.</p>
 
+      <div className="mb-6 flex items-center gap-3">
+        <input
+          type="checkbox"
+          id="countdown-toggle"
+          checked={showCountdown}
+          onChange={(e) => {
+            setShowCountdown(e.target.checked);
+            if (!e.target.checked) {
+              stop();
+            }
+          }}
+          className="w-4 h-4 cursor-pointer"
+        />
+        <label htmlFor="countdown-toggle" className="text-sm text-gray-300 cursor-pointer">
+          Show countdown on scan
+        </label>
+      </div>
+
       <QRScanner onScan={handleScan} />
 
       {error && <ErrorAlert message={error} />}
-
-      <ScanCountdown countdown={countdown} status={status} />
     </main>
   );
 };
