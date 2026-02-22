@@ -120,7 +120,8 @@ export const searchSpotifyAlbums = async (
 };
 
 /**
- * Fetches tracks for an album, including basic album info for card generation.
+ * Fetches tracks for an album, including full album info for card generation.
+ * For each track, searches for the original version to get accurate release dates.
  *
  * @param accessToken - Spotify API access token
  * @param albumId - The Spotify album ID to fetch tracks from
@@ -131,28 +132,39 @@ export const getAlbumTracks = async (
   accessToken: string,
   albumId: string
 ): Promise<SpotifyTrack[]> => {
-  const albumResponse = await fetch(
-    `https://api.spotify.com/v1/albums/${albumId}?fields=id,name,release_date,artists(name)`,
-    {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }
-  );
+  // Step 1: Load album metadata once so we can decide whether to use
+  // the fast path (regular albums) or the expensive resolution path
+  // (compilations with potentially incorrect release years).
+  const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
 
   if (!albumResponse.ok) {
     throw new Error("Failed to fetch album info");
   }
 
   const albumData = await albumResponse.json();
-  const albumInfo = {
+  const isCompilationAlbum = albumData.album_type === "compilation";
+  // Base album info used directly for non-compilation albums.
+  const baseAlbumInfo = {
     name: albumData.name ?? "",
-    release_date: typeof albumData.release_date === "string" ? albumData.release_date : "",
+    release_date: albumData.release_date ?? "",
   };
 
-  const tracks: SpotifyTrack[] = [];
+  const trackIds: string[] = [];
   let offset = 0;
   const limit = 50;
   let hasMore = true;
 
+  // Fast-path output container for non-compilation albums.
+  const directTracks: SpotifyTrack[] = [];
+
+  // For compilation albums, we store minimal track data for follow-up search:
+  // - trackIds keeps processing order
+  // - trackInfoMap keeps searchable text (song + artists)
+  const trackInfoMap = new Map<string, { name: string; artists: any[] }>();
+  
+  // Step 2: Read all tracks from the selected album (paginated).
   while (hasMore) {
     const params = new URLSearchParams({
       offset: offset.toString(),
@@ -172,21 +184,122 @@ export const getAlbumTracks = async (
 
     const data = await response.json();
     const items = data.items ?? [];
-
-    const validTracks = items.map((item: SpotifyTrack) => ({
-      id: item.id,
-      name: item.name,
-      artists: item.artists ?? [],
-      album: albumInfo,
-    }));
-
-    tracks.push(...validTracks);
+    
+    // Branch behavior by album type:
+    // - compilation: defer year resolution via search
+    // - non-compilation: use the selected album's release year directly
+    items.forEach((item: any) => {
+      if (isCompilationAlbum) {
+        trackIds.push(item.id);
+        trackInfoMap.set(item.id, {
+          name: item.name,
+          artists: item.artists,
+        });
+      } else {
+        directTracks.push({
+          id: item.id,
+          name: item.name,
+          artists: item.artists ?? [],
+          album: baseAlbumInfo,
+        });
+      }
+    });
 
     hasMore = data.next !== null && data.next !== undefined;
     offset += limit;
   }
 
-  return tracks;
+  // Step 3 (fast path): for regular albums, return immediately.
+  if (!isCompilationAlbum) {
+    return directTracks;
+  }
+
+  // Step 3 (compilation path): resolve each track's likely original release by
+  // searching Spotify and preferring candidates from album-type "album".
+  const resolveTrack = async (trackId: string): Promise<SpotifyTrack | null> => {
+    try {
+      const trackInfo = trackInfoMap.get(trackId);
+      if (!trackInfo) {
+        return null;
+      }
+
+      const artistNames = trackInfo.artists.map((artist: any) => artist.name).join(" ");
+      const query = `${trackInfo.name} ${artistNames}`;
+      const searchParams = new URLSearchParams({
+        q: query,
+        type: "track",
+        // Pull multiple candidates so we can pick a non-compilation album result.
+        limit: "10",
+      });
+
+      const searchResponse = await fetch(
+        `https://api.spotify.com/v1/search?${searchParams.toString()}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (!searchResponse.ok) {
+        console.warn(`Failed to search for track "${trackInfo.name}"`);
+        return null;
+      }
+
+      const searchData = await searchResponse.json();
+      const candidates = (searchData.tracks?.items ?? []).filter((candidate: any) => candidate !== null);
+      // Prefer a canonical album release; fallback to first candidate when needed.
+      const foundTrack =
+        candidates.find((candidate: any) => candidate.album?.album_type === "album") ?? candidates[0];
+
+      if (!foundTrack) {
+        return null;
+      }
+
+      return {
+        id: foundTrack.id,
+        name: foundTrack.name,
+        artists: foundTrack.artists ?? [],
+        album: {
+          name: foundTrack.album?.name ?? "",
+          release_date: foundTrack.album?.release_date ?? "",
+        },
+      };
+    } catch (err) {
+      console.warn(`Error processing track ${trackId}:`, err);
+      return null;
+    }
+  };
+
+  // Step 4: bounded parallelism to speed up compilation resolution while
+  // avoiding a burst of one-request-per-track at the same instant.
+  const maxConcurrent = 5;
+  const resolvedTracks: Array<SpotifyTrack | null> = new Array(trackIds.length).fill(null);
+  let nextIndex = 0;
+
+  // Worker pulls next index, resolves that track, stores result in-place.
+  // In-place assignment preserves original track order.
+  const worker = async () => {
+    while (true) {
+      const index = nextIndex;
+      nextIndex += 1;
+
+      if (index >= trackIds.length) {
+        return;
+      }
+
+      resolvedTracks[index] = await resolveTrack(trackIds[index]);
+    }
+  };
+
+  // Spin up a small worker pool and wait for all workers to finish.
+  const workers = Array.from(
+    { length: Math.min(maxConcurrent, trackIds.length) },
+    () => worker()
+  );
+
+  await Promise.all(workers);
+
+  // Return only successfully resolved tracks.
+  return resolvedTracks.filter((track): track is SpotifyTrack => track !== null);
 };
 
 /**
