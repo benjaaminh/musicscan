@@ -3,6 +3,14 @@
   display: none;
 }
 
+.print-instructions {
+  margin: 0;
+  font-size: 14px;
+  color: #e2e8f0;
+  text-align: center;
+  grid-column: 1 / -1;
+}
+
 @media print {
   /* Show print container as grid to fit multiple cards */
   .print-container {
@@ -11,6 +19,14 @@
     gap: 4px !important;
     padding: 4px !important;
     background: white !important;
+  }
+
+  .print-instructions {
+    font-size: 11px;
+    color: #111 !important;
+    margin: 0 0 6px 0;
+    text-align: center;
+    grid-column: 1 / -1;
   }
 
   body {

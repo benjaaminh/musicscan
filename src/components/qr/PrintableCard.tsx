@@ -61,6 +61,7 @@ const PrintableCard: React.FC<Props> = ({ cards }) => {
     <div>
       <PrintButton onPrint={handlePrint} />
       <div ref={printRef} className="print-container">
+        <p className="print-instructions">Fold each card in half so the QR code is on one side and the song info is on the other.</p>
         {cards.map((card) => (
           <QRCard key={card.id} card={card} />
         ))}
