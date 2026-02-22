@@ -3,7 +3,7 @@ import React from "react";
 /**
  * Button component for loading user's playlists.
  *
- * @prop onClick - Callback when button is clicked
+ * @prop onClick - Function when button is clicked
  * @prop loading - Whether playlists are currently loading
  * @prop isActive - Whether user playlists view is currently active
  */

@@ -56,7 +56,7 @@ const ScanCard = () => {
       <p className="text-sm sm:text-base text-muted mb-6">Scan a QR code pointing to a Spotify track to play it.</p>
 
       <div className="mb-6 flex items-center gap-3">
-        <input
+        <input // countdown toggle checkbox
           type="checkbox"
           id="countdown-toggle"
           checked={showCountdown}

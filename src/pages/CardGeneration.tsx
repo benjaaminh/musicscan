@@ -28,6 +28,11 @@ const CardGeneration = () => {
     logout();
   };
 
+  /**
+   * handle generation of cards. Supports cards from multiple sources, such as playlists, albums, individual tracks, etc.
+   * @param newCards the newly selected cards
+   * @returns the generated cards in combination with the existing cards
+   */
   const handleCardsGenerated = (newCards: Card[]) => {
     if (newCards.length === 0) {
       return;

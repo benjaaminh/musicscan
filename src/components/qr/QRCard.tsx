@@ -26,7 +26,7 @@ export const QRCard: React.FC<CardProps> = ({ card }) => {
       {/* Metadata Side */}
       <div className="card-side metadata-side">
         <div className="metadata-content">
-          <h2 className="text-7xl font-bold">{card.year}</h2>
+          <h2 className="text-7xl font-bold">{card.year}</h2> {/* year is largest */}
           <p className="title">{card.title}</p>
           <p className="artist">{card.artist}</p>
         </div>

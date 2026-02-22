@@ -41,11 +41,18 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
   const [trackQuery, setTrackQuery] = useState("");
   const [albumQuery, setAlbumQuery] = useState("");
 
-  const handleTogglePlaylist = (playlist: any) => {
+  /**
+   * Function for selecting a playlist
+   * @param playlist the playlist to select
+   */
+  const handleSelectPlaylist = (playlist: any) => {
+    // check if the playlist is selected
     const isSelected = selectedPlaylists.some((item) => item.id === playlist.id);
+    // if it is, filter it out
     if (isSelected) {
       setSelectedPlaylists(selectedPlaylists.filter((item) => item.id !== playlist.id));
     } else {
+      // else, add it to selected playlists
       setSelectedPlaylists([...selectedPlaylists, playlist]);
     }
   };
@@ -217,7 +224,7 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
         <PlaylistPickerGrid
           playlists={playlists}
           selectedPlaylistIds={selectedPlaylists.map((playlist) => playlist.id)}
-          onToggle={handleTogglePlaylist}
+          onToggle={handleSelectPlaylist}
           loading={loading}
           showUserPlaylists={showUserPlaylists}
         />

@@ -4,7 +4,7 @@ import React from "react";
  * Camera-based QR code scanner UI component.
  * Displays the camera feed and start button for scanning QR codes.
  *
- * @prop onStart - Callback when user clicks the start camera button
+ * @prop onStart - Function when user clicks the start camera button
  * @prop isStarted - Whether the camera is currently active
  * @prop isInitializing - Whether camera permissions are being requested
  */
