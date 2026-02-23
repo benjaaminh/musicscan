@@ -81,7 +81,7 @@ Compiles TypeScript and optimizes assets with tree-shaking for production.
 
 ### Linting
 ```bash
-npm lint
+npm run lint
 ```
 Validates code with ESLint (React hooks rules included).
 
@@ -90,3 +90,30 @@ Validates code with ESLint (React hooks rules included).
 npm run preview
 ```
 Serves production build locally for testing before deployment.
+
+### Testing
+```bash
+npm run test
+```
+Runs the unit/integration test suite with Vitest + React Testing Library.
+
+```bash
+npm run test:watch
+```
+Runs unit/integration tests in watch mode during development.
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+Installs Playwright browser runtime and executes end-to-end tests.
+
+```bash
+npm run test:all
+```
+Runs both unit/integration and end-to-end suites.
+
+Test files are organized under:
+- `tests/unit/**` for pure logic/hooks/util unit tests
+- `tests/integration/**` for component/page integration tests
+- `tests/e2e/**` for Playwright browser end-to-end tests

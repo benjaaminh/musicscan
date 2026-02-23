@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
@@ -48,5 +48,13 @@ export default defineConfig({
   server: {
     host: true, // Hosting for mobile device testing
     allowedHosts: ngrok ? [ngrok] : true
+  },
+
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./tests/setup.ts'],
+    css: true,
+    clearMocks: true,
+    include: ['tests/unit/**/*.test.{ts,tsx}', 'tests/integration/**/*.test.{ts,tsx}']
   }
 })
