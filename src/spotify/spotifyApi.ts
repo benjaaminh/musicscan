@@ -1,6 +1,6 @@
 // Spotify API calls for tracks, playlists, and search
 
-import type { SpotifyAlbum, SpotifyPlaylist, SpotifyTrack } from "../types/spotifyTypes";
+import type { AlbumTrackItem, SpotifyAlbum, SpotifyArtist, SpotifyPlaylist, SpotifyTrack, SpotifyTrackSearchCandidate } from "../types/spotifyTypes";
 
 /**
  * Fetches all tracks from a playlist
@@ -162,7 +162,7 @@ export const getAlbumTracks = async (
   // For compilation albums, we store minimal track data for follow-up search:
   // - trackIds keeps processing order
   // - trackInfoMap keeps searchable text (song + artists)
-  const trackInfoMap = new Map<string, { name: string; artists: any[] }>();
+  const trackInfoMap = new Map<string, { name: string; artists: SpotifyArtist[] }>();
   
   // Step 2: Read all tracks from the selected album (paginated).
   while (hasMore) {
@@ -188,18 +188,18 @@ export const getAlbumTracks = async (
     // Branch behavior by album type:
     // - compilation: defer year resolution via search
     // - non-compilation: use the selected album's release year directly
-    items.forEach((item: any) => {
+    items.forEach((item: AlbumTrackItem) => {
       if (isCompilationAlbum) {
         trackIds.push(item.id);
         trackInfoMap.set(item.id, {
           name: item.name,
-          artists: item.artists,
+          artists: (item.artists ?? []).map((artist) => ({ name: artist.name ?? "" })),
         });
       } else {
         directTracks.push({
           id: item.id,
           name: item.name,
-          artists: item.artists ?? [],
+          artists: (item.artists ?? []).map((artist) => ({ name: artist.name ?? "" })),
           album: baseAlbumInfo,
         });
       }
@@ -223,7 +223,7 @@ export const getAlbumTracks = async (
         return null;
       }
 
-      const artistNames = trackInfo.artists.map((artist: any) => artist.name).join(" ");
+      const artistNames = trackInfo.artists.map((artist: SpotifyArtist) => artist.name ?? "").join(" ");
       const query = `${trackInfo.name} ${artistNames}`;
       const searchParams = new URLSearchParams({
         q: query,
@@ -245,10 +245,12 @@ export const getAlbumTracks = async (
       }
 
       const searchData = await searchResponse.json();
-      const candidates = (searchData.tracks?.items ?? []).filter((candidate: any) => candidate !== null);
+      const candidates = ((searchData.tracks?.items ?? []) as Array<SpotifyTrackSearchCandidate | null>).filter(
+        (candidate): candidate is SpotifyTrackSearchCandidate => candidate !== null
+      );
       // Prefer a canonical album release; fallback to first candidate when needed.
       const foundTrack =
-        candidates.find((candidate: any) => candidate.album?.album_type === "album") ?? candidates[0];
+        candidates.find((candidate) => candidate.album?.album_type === "album") ?? candidates[0];
 
       if (!foundTrack) {
         return null;
@@ -338,7 +340,9 @@ export const getCurrentUserPlaylists = async (
 
     const data = await response.json();
     // Filter out null items from Spotify API
-    const validItems = (data.items ?? []).filter((item: any): item is SpotifyPlaylist => item !== null);
+    const validItems = ((data.items ?? []) as Array<SpotifyPlaylist | null>).filter(
+      (item): item is SpotifyPlaylist => item !== null
+    );
     playlists.push(...validItems);
 
     hasMore = data.next !== null && data.next !== undefined;

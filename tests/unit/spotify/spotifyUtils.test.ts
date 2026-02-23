@@ -1,5 +1,3 @@
-/// <reference types="vitest" />
-/// <reference types="vite/client" />
 import { describe, expect, it } from 'vitest';
 import {
   base64UrlEncode,
@@ -9,6 +7,8 @@ import {
 } from '../../../src/spotify/spotifyUtils';
 
 describe('spotifyUtils', () => {
+  const env = (import.meta as ImportMeta & { env: Record<string, string | undefined> }).env;
+
   it('base64UrlEncode converts bytes to url-safe base64', () => {
     const bytes = Uint8Array.from([116, 101, 115, 116]);
     expect(base64UrlEncode(bytes)).toBe('dGVzdA');
@@ -28,8 +28,8 @@ describe('spotifyUtils', () => {
   it('getSpotifyConfig maps values from import.meta.env with null fallback', () => {
     const config = getSpotifyConfig();
     expect(config).toEqual({
-      clientId: import.meta.env.VITE_SPOTIFY_CLIENT_ID ?? null,
-      redirectUri: import.meta.env.VITE_SPOTIFY_REDIRECT_URI ?? null,
+      clientId: env.VITE_SPOTIFY_CLIENT_ID ?? null,
+      redirectUri: env.VITE_SPOTIFY_REDIRECT_URI ?? null,
     });
   });
 });

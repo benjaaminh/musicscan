@@ -130,7 +130,7 @@ export const useQRScanner = (onScan: (text: string) => void) => {
     } finally {
       setIsInitializing(false);
     }
-  }, [ensureScanner, isInitializing, isStarted, onScan, pickPreferredBackCameraId, stopScanner]);
+  }, [ensureScanner, isInitializing, isStarted, onScan, pickPreferredBackCameraId]);
 
   const handleFileSelect = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {

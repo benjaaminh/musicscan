@@ -111,7 +111,7 @@ export const useMusicLibrary = (accessToken: string | null) => {
     } finally {
       setLoading(false);
     }
-  }, [accessToken]);
+  }, [accessToken, buildCardsFromTracks]);
 
   const selectPlaylists = useCallback(
     async (playlistsToLoad: SpotifyPlaylist[]): Promise<Card[]> => {
@@ -147,7 +147,7 @@ export const useMusicLibrary = (accessToken: string | null) => {
         setLoading(false);
       }
     },
-    [accessToken]
+    [accessToken, buildCardsFromTracks]
   );
 
   const selectAlbums = useCallback(
@@ -184,7 +184,7 @@ export const useMusicLibrary = (accessToken: string | null) => {
         setLoading(false);
       }
     },
-    [accessToken]
+    [accessToken, buildCardsFromTracks]
   );
 
   const reset = useCallback(() => {

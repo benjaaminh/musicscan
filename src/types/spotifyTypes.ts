@@ -48,3 +48,20 @@ export type SpotifyTrack = {
   artists: Array<{ name: string }>;
   album: { name: string; release_date: string };
 };
+
+export type SpotifyArtist = { name: string };
+export type AlbumTrackItem = {
+  id: string;
+  name: string;
+  artists?: Array<{ name?: string }>;
+};
+export type SpotifyTrackSearchCandidate = {
+  id: string;
+  name: string;
+  artists: SpotifyArtist[];
+  album?: {
+    name?: string;
+    release_date?: string;
+    album_type?: string;
+  };
+};
