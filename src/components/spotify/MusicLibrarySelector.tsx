@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { useMusicLibrary } from "../../hooks/useMusicLibrary";
 import { useCardBuilder } from "../../hooks/useCardBuilder";
-import { LibraryPlaylistsButton } from "./LibraryPlaylistsButton";
-import { PlaylistPickerGrid } from "./PlaylistPickerGrid";
+import type { SpotifyPlaylist } from "../../spotify/spotifyClient";
+import { LibraryPlaylistsButton } from "../spotify/LibraryPlaylistsButton";
+import { PlaylistPickerGrid } from "../spotify/PlaylistPickerGrid";
+import { TrackSearchSection } from "../spotify/TrackSearchSection";
+import { AlbumSearchSection } from "../spotify/AlbumSearchSection";
+import { SelectionSummaryBar } from "../spotify/SelectionSummaryBar";
 import { Alert, ErrorAlert } from "../common/Alert";
 import type { Card } from "../../types/Card";
 
@@ -38,14 +42,11 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
   } = useMusicLibrary(accessToken);
   const { buildCardsFromTracks } = useCardBuilder();
 
-  const [trackQuery, setTrackQuery] = useState("");
-  const [albumQuery, setAlbumQuery] = useState("");
-
   /**
    * Function for selecting a playlist
    * @param playlist the playlist to select
    */
-  const handleSelectPlaylist = (playlist: any) => {
+  const handleSelectPlaylist = (playlist: SpotifyPlaylist) => {
     // check if the playlist is selected
     const isSelected = selectedPlaylists.some((item) => item.id === playlist.id);
     // if it is, filter it out
@@ -60,34 +61,28 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
   const handleGenerateFromSavedTracks = async () => {
     const cards = await loadSavedTracks();
     if (cards.length > 0) {
-      onCardsGenerated(cards);
+      onCardsGenerated(cards); //set the saved tracks into generated tracks
     }
-  };
-
-  const handleSearchTracks = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await searchTracks(trackQuery);
   };
 
   const handleToggleTrack = (trackId: string) => {
+    // check if track is selected
     const isSelected = selectedTracks.some((track) => track.id === trackId);
-    if (isSelected) {
+    // if it is, filter it out from selected
+    if (isSelected) { 
       setSelectedTracks(selectedTracks.filter((track) => track.id !== trackId));
       return;
     }
-
+    
+    //select a track
     const track = trackResults.find((result) => result.id === trackId);
     if (track) {
+      //add it to list of selected tracks
       setSelectedTracks([...selectedTracks, track]);
     }
   };
 
-
-  const handleSearchAlbums = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await searchAlbums(albumQuery);
-  };
-
+  // select album
   const handleToggleAlbum = (albumId: string) => {
     const isSelected = selectedAlbums.some((album) => album.id === albumId);
     if (isSelected) {
@@ -101,6 +96,10 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
     }
   };
 
+
+  /**
+   * Function to handle card generation from multiple sources
+   */
   const handleGenerateFromAll = async () => {
     const allCards: Card[] = [];
 
@@ -146,6 +145,9 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
     return descriptions.join(', ');
   };
 
+  const totalSelectionsCount = getTotalSelectionsCount();
+  const selectionsDescription = getSelectionsDescription();
+
   if (!accessToken) {
     return (
       <Alert
@@ -169,7 +171,7 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
         />
         <div className="card p-4">
           <button
-            onClick={handleGenerateFromSavedTracks}
+            onClick={handleGenerateFromSavedTracks} //use liked songs
             disabled={loading}
             className="w-full btn btn-secondary"
           >
@@ -178,49 +180,25 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
         </div>
       </div>
 
-      <div className="card p-4 mt-4">
-        <h3 className="text-lg font-semibold mb-3">Search Tracks</h3>
-        <form onSubmit={handleSearchTracks} className="flex flex-col sm:flex-row gap-2">
-          <input
-            type="text"
-            placeholder="Search for tracks or artists..."
-            value={trackQuery}
-            onChange={(e) => setTrackQuery(e.target.value)}
-            className="input-base flex-1"
-          />
-          <button
-            type="submit"
-            disabled={loading || !trackQuery.trim()}
-            className="btn btn-primary w-full sm:w-auto"
-          >
-            Search
-          </button>
-        </form>
-      </div>
+      <TrackSearchSection // tracks
+        loading={loading}
+        trackResults={trackResults}
+        selectedTrackIds={selectedTracks.map((track) => track.id)}
+        onSearch={searchTracks}
+        onToggleTrack={handleToggleTrack}
+      />
 
-      <div className="card p-4 mt-4">
-        <h3 className="text-lg font-semibold mb-3">Search Albums</h3>
-        <form onSubmit={handleSearchAlbums} className="flex flex-col sm:flex-row gap-2">
-          <input
-            type="text"
-            placeholder="Search for albums or compilations..."
-            value={albumQuery}
-            onChange={(e) => setAlbumQuery(e.target.value)}
-            className="input-base flex-1"
-          />
-          <button
-            type="submit"
-            disabled={loading || !albumQuery.trim()}
-            className="btn btn-primary w-full sm:w-auto"
-          >
-            Search
-          </button>
-        </form>
-      </div>
+      <AlbumSearchSection //albums
+        loading={loading}
+        albumResults={albumResults}
+        selectedAlbumIds={selectedAlbums.map((album) => album.id)}
+        onSearch={searchAlbums}
+        onToggleAlbum={handleToggleAlbum}
+      />
 
       {error && <ErrorAlert message={error} />}
 
-      {showUserPlaylists && (
+      {showUserPlaylists && ( //user playlists
         <PlaylistPickerGrid
           playlists={playlists}
           selectedPlaylistIds={selectedPlaylists.map((playlist) => playlist.id)}
@@ -230,106 +208,18 @@ const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGene
         />
       )}
 
-      {trackResults.length > 0 && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-3">Track Results</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {trackResults.map((track) => (
-              <div
-                key={track.id}
-                className={`card p-4 cursor-pointer ${
-                  selectedTracks.some((selected) => selected.id === track.id)
-                    ? "border-slate-300 bg-slate-300/10"
-                    : "hover:shadow-md"
-                }`}
-                onClick={() => handleToggleTrack(track.id)}
-              >
-                <h4 className="font-semibold text-sm mb-1 truncate">{track.name}</h4>
-                <p className="text-xs text-muted mb-2">
-                  {track.artists.map((artist) => artist.name).join(", ")}
-                </p>
-                <p className="text-xs text-muted">
-                  {track.album?.name ?? "Unknown album"}
-                </p>
-                {selectedTracks.some((selected) => selected.id === track.id) && (
-                  <p className="text-xs text-sky-200 mt-2 font-semibold">Selected</p>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {selectedTracks.length > 0 && (
-            <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <Alert message={`Selected ${selectedTracks.length} tracks`} variant="success" />
-            </div>
-          )}
-        </div>
-      )}
-
-      {albumResults.length > 0 && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-3">Album Results</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {albumResults.map((album) => (
-              <div
-                key={album.id}
-                className={`card p-4 cursor-pointer ${
-                  selectedAlbums.some((selected) => selected.id === album.id)
-                    ? "border-slate-300 bg-slate-300/10"
-                    : "hover:shadow-md"
-                }`}
-                onClick={() => handleToggleAlbum(album.id)}
-              >
-                {album.images?.[0]?.url && (
-                  <img
-                    src={album.images[0].url}
-                    alt={album.name}
-                    className="w-full h-32 object-cover rounded-md mb-3"
-                  />
-                )}
-                <h4 className="font-semibold text-sm mb-1 truncate">{album.name}</h4>
-                <p className="text-xs text-muted mb-2">
-                  {album.artists.map((artist) => artist.name).join(", ")}
-                </p>
-                <p className="text-xs text-muted">{album.total_tracks || 0} tracks</p>
-                {selectedAlbums.some((selected) => selected.id === album.id) && (
-                  <p className="text-xs text-sky-200 mt-2 font-semibold">Selected</p>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {selectedAlbums.length > 0 && (
-            <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <Alert message={`Selected ${selectedAlbums.length} albums`} variant="success" />
-            </div>
-          )}
-        </div>
-      )}
-
       {!loading && showUserPlaylists && playlists.length === 0 && (
         <div className="text-center py-8">
           <p className="text-muted">No playlists found. Follow a playlist in Spotify and try again.</p>
         </div>
       )}
 
-      {getTotalSelectionsCount() > 0 && (
-        <div className="mt-6 card p-4 bg-slate-800/50 border border-slate-700">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <p className="text-sm text-slate-300 mb-1">Selected for card generation:</p>
-              <p className="text-lg font-semibold text-sky-300">{getSelectionsDescription()}</p>
-            </div>
-            <button
-              type="button"
-              className="btn btn-primary w-full sm:w-auto"
-              disabled={loading}
-              onClick={handleGenerateFromAll}
-            >
-              Generate Cards
-            </button>
-          </div>
-        </div>
+      {totalSelectionsCount > 0 && (
+        <SelectionSummaryBar // what is selected
+          selectionDescription={selectionsDescription}
+          loading={loading}
+          onGenerate={handleGenerateFromAll}
+        />
       )}
     </div>
   );

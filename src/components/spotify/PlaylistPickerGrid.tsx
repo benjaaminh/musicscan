@@ -50,13 +50,13 @@ export const PlaylistPickerGrid: React.FC<PlaylistPickerGridProps> = ({
           <div
             key={playlist.id}
             className={`card p-4 cursor-pointer ${
-              selectedPlaylistIds.includes(playlist.id)
+              selectedPlaylistIds.includes(playlist.id) //conditional render if selected or not
                 ? "border-slate-300 bg-slate-300/10"
                 : "hover:shadow-md"
             }`}
             onClick={() => onToggle(playlist)}
           >
-            {playlist.images?.[0]?.url && (
+            {playlist.images?.[0]?.url && ( //render playlist image
               <img
                 src={playlist.images[0].url}
                 alt={playlist.name}
@@ -70,7 +70,7 @@ export const PlaylistPickerGrid: React.FC<PlaylistPickerGridProps> = ({
             <div className="flex justify-between items-center mb-2">
               <p className="text-xs text-muted">{playlist.items?.total || 0} tracks</p>
             </div>
-            {selectedPlaylistIds.includes(playlist.id) && (
+            {selectedPlaylistIds.includes(playlist.id) && ( //if selected
               <p className="text-xs text-sky-200 mt-2 font-semibold">Selected</p>
             )}
           </div>
