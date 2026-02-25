@@ -17,7 +17,7 @@ const Home = () => {
               to="/generate"
               className="w-full btn btn-info text-base"
             >
-              Generate Cards (Spotify Premium Required)
+              Generate Cards (Spotify auth required)
             </Link>
           </div>
           <div>
