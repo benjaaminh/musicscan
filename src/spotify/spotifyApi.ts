@@ -1,6 +1,7 @@
 // Spotify API calls for tracks, playlists, and search
 
 import type { AlbumTrackItem, SpotifyAlbum, SpotifyArtist, SpotifyPlaylist, SpotifyTrack, SpotifyTrackSearchCandidate } from "../types/spotifyTypes";
+import { spotifyRequestJson } from "./spotifyRequest";
 
 /**
  * Fetches all tracks from a playlist
@@ -25,18 +26,14 @@ export const getPlaylistTracks = async (
       limit: limit.toString(),
     });
 
-    const response = await fetch(
-      `https://api.spotify.com/v1/playlists/${playlistId}/items?${params.toString()}`,
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch playlist tracks");
-    }
-
-    const data = await response.json();
+    const data = await spotifyRequestJson<{
+      items?: Array<{ track?: SpotifyTrack | null; item?: SpotifyTrack | null }>;
+      next?: string | null;
+    }>({
+      accessToken,
+      url: `https://api.spotify.com/v1/playlists/${playlistId}/items?${params.toString()}`,
+      action: "fetch playlist tracks",
+    });
     const items = data.items ?? []; // items in the playlist
 
     const validTracks = items
@@ -72,18 +69,11 @@ export const searchSpotifyTracks = async (
     type: "track"
   });
 
-  const response = await fetch(`https://api.spotify.com/v1/search?${params.toString()}`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
+  const data = await spotifyRequestJson<{ tracks?: { items?: Array<SpotifyTrack | null> } }>({
+    accessToken,
+    url: `https://api.spotify.com/v1/search?${params.toString()}`,
+    action: "search tracks",
   });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      `Failed to search tracks: ${errorData.error?.message || response.statusText}`
-    );
-  }
-
-  const data = await response.json();
   return (data.tracks?.items ?? []).filter((item: SpotifyTrack | null): item is SpotifyTrack => item !== null);
 };
 
@@ -104,18 +94,11 @@ export const searchSpotifyAlbums = async (
     type: "album"
   });
 
-  const response = await fetch(`https://api.spotify.com/v1/search?${params.toString()}`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
+  const data = await spotifyRequestJson<{ albums?: { items?: Array<SpotifyAlbum | null> } }>({
+    accessToken,
+    url: `https://api.spotify.com/v1/search?${params.toString()}`,
+    action: "search albums",
   });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      `Failed to search albums: ${errorData.error?.message || response.statusText}`
-    );
-  }
-
-  const data = await response.json();
   return (data.albums?.items ?? []).filter((item: SpotifyAlbum | null): item is SpotifyAlbum => item !== null);
 };
 
@@ -135,15 +118,15 @@ export const getAlbumTracks = async (
   // Step 1: Load album metadata once so we can decide whether to use
   // the fast path (regular albums) or the expensive resolution path
   // (compilations with potentially incorrect release years).
-  const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
+  const albumData = await spotifyRequestJson<{
+    album_type?: string;
+    name?: string;
+    release_date?: string;
+  }>({
+    accessToken,
+    url: `https://api.spotify.com/v1/albums/${albumId}`,
+    action: "fetch album info",
   });
-
-  if (!albumResponse.ok) {
-    throw new Error("Failed to fetch album info");
-  }
-
-  const albumData = await albumResponse.json();
   const isCompilationAlbum = albumData.album_type === "compilation";
   // Base album info used directly for non-compilation albums.
   const baseAlbumInfo = {
@@ -171,18 +154,11 @@ export const getAlbumTracks = async (
       limit: limit.toString(),
     });
 
-    const response = await fetch(
-      `https://api.spotify.com/v1/albums/${albumId}/tracks?${params.toString()}`,
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch album tracks");
-    }
-
-    const data = await response.json();
+    const data = await spotifyRequestJson<{ items?: AlbumTrackItem[]; next?: string | null }>({
+      accessToken,
+      url: `https://api.spotify.com/v1/albums/${albumId}/tracks?${params.toString()}`,
+      action: "fetch album tracks",
+    });
     const items = data.items ?? [];
     
     // Branch behavior by album type:
@@ -232,19 +208,11 @@ export const getAlbumTracks = async (
         limit: "10",
       });
 
-      const searchResponse = await fetch(
-        `https://api.spotify.com/v1/search?${searchParams.toString()}`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-
-      if (!searchResponse.ok) {
-        console.warn(`Failed to search for track "${trackInfo.name}"`);
-        return null;
-      }
-
-      const searchData = await searchResponse.json();
+      const searchData = await spotifyRequestJson<{ tracks?: { items?: Array<SpotifyTrackSearchCandidate | null> } }>({
+        accessToken,
+        url: `https://api.spotify.com/v1/search?${searchParams.toString()}`,
+        action: `search a matching track for "${trackInfo.name}"`,
+      });
       const candidates = ((searchData.tracks?.items ?? []) as Array<SpotifyTrackSearchCandidate | null>).filter(
         (candidate): candidate is SpotifyTrackSearchCandidate => candidate !== null
       );
@@ -266,7 +234,8 @@ export const getAlbumTracks = async (
         },
       };
     } catch (err) {
-      console.warn(`Error processing track ${trackId}:`, err);
+      const message = err instanceof Error ? err.message : "Unknown error";
+      console.warn(`Error processing track ${trackId}: ${message}`);
       return null;
     }
   };
@@ -327,18 +296,14 @@ export const getCurrentUserPlaylists = async (
       limit: limit.toString(),
     });
 
-    const response = await fetch(
-      `https://api.spotify.com/v1/me/playlists?${params.toString()}`,
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch user playlists");
-    }
-
-    const data = await response.json();
+    const data = await spotifyRequestJson<{
+      items?: Array<SpotifyPlaylist | null>;
+      next?: string | null;
+    }>({
+      accessToken,
+      url: `https://api.spotify.com/v1/me/playlists?${params.toString()}`,
+      action: "retrieve playlists",
+    });
     // Filter out null items from Spotify API
     const validItems = ((data.items ?? []) as Array<SpotifyPlaylist | null>).filter(
       (item): item is SpotifyPlaylist => item !== null
@@ -374,18 +339,14 @@ export const getCurrentUserSavedTracks = async (
       limit: limit.toString(),
     });
 
-    const response = await fetch(
-      `https://api.spotify.com/v1/me/tracks?${params.toString()}`,
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch saved tracks");
-    }
-
-    const data = await response.json();
+    const data = await spotifyRequestJson<{
+      items?: Array<{ track?: SpotifyTrack | null }>;
+      next?: string | null;
+    }>({
+      accessToken,
+      url: `https://api.spotify.com/v1/me/tracks?${params.toString()}`,
+      action: "retrieve saved tracks",
+    });
     const items = data.items ?? [];
 
     const validTracks = items

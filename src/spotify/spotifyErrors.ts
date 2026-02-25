@@ -19,7 +19,7 @@ const getStatusHint = (status: number, retryAfterSeconds: number | null): string
   }
 
   if (status === 403) {
-    return "Spotify denied this request. Your account may be missing required permissions/scopes.";
+    return "Spotify denied this request. You most likely are not authorized to use the application";
   }
 
   if (status === 429) {
