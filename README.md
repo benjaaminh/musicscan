@@ -2,9 +2,12 @@
 
 Progressive web application that generates printable QR code cards for music tracks and allows users to scan them to play music via Spotify. Built with TypeScript, Vite, React Router, and Tailwind CSS, featuring PWA capabilities for offline-first functionality.
 
+## NOTE
+The Spotify integration is in "Development Mode", which means only 5 authorized users may use the application. Submitting an application to move away from development mode can only be done by an established organization, not a private individual.
+
 ## Project Overview
 
-Interactive music discovery and playback application designed around a hybrid local-online experience. Users can generate custom music cards from their Spotify library (when enabled and subscribed to Spotify premium), print them, and then scan the cards with their mobile device to instantly play tracks on Spotify.
+Interactive music discovery and playback application designed around a hybrid local-online experience. Users can generate custom music cards from their Spotify library (if authorized), print them, and then scan the cards with their mobile device to instantly play tracks on Spotify.
 
 ## Key Features
 
