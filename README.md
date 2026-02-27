@@ -48,7 +48,7 @@ Interactive music discovery and playback application designed around a hybrid lo
 <img width="1077" height="598" alt="image" src="https://github.com/user-attachments/assets/3907747c-facb-459f-b7e9-38883bac3b8c" />
 
 ### Printing the cards:
-<img width="953" height="811" alt="image" src="https://github.com/user-attachments/assets/ec3bae0e-f170-4d30-87ba-a36e70115805" />
+<img width="956" height="805" alt="image" src="https://github.com/user-attachments/assets/c86892d1-759d-48fd-83f4-d937a0753185" />
 
 ### Scanning a card:
 <img width="515" height="653" alt="image" src="https://github.com/user-attachments/assets/7cbd23dc-0855-40b4-a9ae-eca6e9817473" />
