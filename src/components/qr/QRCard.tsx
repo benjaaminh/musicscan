@@ -1,4 +1,3 @@
-import React from "react";
 import QRCode from "react-qr-code";
 import type { Card } from "../../types/Card";
 
