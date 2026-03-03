@@ -1,4 +1,3 @@
-import React from "react";
 import PrintableCard from "./qr/PrintableCard";
 import type { Card } from "../types/Card";
 
@@ -13,7 +12,7 @@ interface GeneratedCardsViewProps {
   cards: Card[];
 }
 
-export const GeneratedCardsView: React.FC<GeneratedCardsViewProps> = ({ cards }) => {
+export const GeneratedCardsView = ({ cards }: GeneratedCardsViewProps) => {
   if (cards.length === 0) {
     return null;
   }

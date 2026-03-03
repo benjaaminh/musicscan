@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { Alert } from "../common/Alert";
 import type { SpotifyAlbum } from "../../spotify/spotifyClient";
 
@@ -10,22 +10,24 @@ interface AlbumSearchSectionProps {
   onToggleAlbum: (albumId: string) => void;
 }
 
-export const AlbumSearchSection: React.FC<AlbumSearchSectionProps> = ({
+export const AlbumSearchSection = ({
   loading,
   albumResults,
   selectedAlbumIds,
   onSearch,
   onToggleAlbum,
-}) => {
-  const [albumQuery, setAlbumQuery] = useState("");
+} : AlbumSearchSectionProps) => {
 
-  const handleSearchAlbums = async (e: React.FormEvent) => {
+  const [albumQuery, setAlbumQuery] = useState(""); //search string for album
+
+  const handleSearchAlbums = async (e: FormEvent) => {
     e.preventDefault();
     await onSearch(albumQuery);
   };
 
   return (
     <>
+      {/* Search input + submit action */}
       <div className="card p-4 mt-4">
         <h3 className="text-lg font-semibold mb-3">Search Albums</h3>
         <form onSubmit={handleSearchAlbums} className="flex flex-col sm:flex-row gap-2">
@@ -50,7 +52,8 @@ export const AlbumSearchSection: React.FC<AlbumSearchSectionProps> = ({
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-3">Album Results</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {albumResults.map((album) => {
+            {albumResults.map((album) => { // show albums
+              // if album is selected
               const isSelected = selectedAlbumIds.includes(album.id);
               return (
                 <div
@@ -60,7 +63,7 @@ export const AlbumSearchSection: React.FC<AlbumSearchSectionProps> = ({
                   }`}
                   onClick={() => onToggleAlbum(album.id)}
                 >
-                  {album.images?.[0]?.url && (
+                  {album.images?.[0]?.url && ( //render images
                     <img
                       src={album.images[0].url}
                       alt={album.name}
@@ -80,6 +83,7 @@ export const AlbumSearchSection: React.FC<AlbumSearchSectionProps> = ({
             })}
           </div>
 
+          {/* Selection summary shown only when at least one album is selected */}
           {selectedAlbumIds.length > 0 && (
             <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <Alert message={`Selected ${selectedAlbumIds.length} albums`} variant="success" />

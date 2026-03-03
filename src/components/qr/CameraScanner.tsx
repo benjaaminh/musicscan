@@ -1,5 +1,3 @@
-import React from "react";
-
 /**
  * Camera-based QR code scanner UI component.
  * Displays the camera feed and start button for scanning QR codes.
@@ -14,11 +12,11 @@ interface CameraScannerProps {
   isInitializing: boolean;
 }
 
-export const CameraScanner: React.FC<CameraScannerProps> = ({
+export const CameraScanner = ({
   onStart,
   isStarted,
   isInitializing,
-}) => {
+}: CameraScannerProps) => {
   return (
     <div>
       <div id="qr-reader" style={{ width: "100%" }} />

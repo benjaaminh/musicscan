@@ -18,6 +18,7 @@ import { useCardBuilder } from "./useCardBuilder";
  * Loads user playlists, searches tracks/albums, and converts tracks to cards.
  */
 export const useMusicLibrary = (accessToken: string | null) => {
+
   const [playlists, setPlaylists] = useState<SpotifyPlaylist[]>([]);
   const [selectedPlaylists, setSelectedPlaylists] = useState<SpotifyPlaylist[]>([]);
   const [trackResults, setTrackResults] = useState<SpotifyTrack[]>([]);
@@ -28,7 +29,7 @@ export const useMusicLibrary = (accessToken: string | null) => {
   const [error, setError] = useState<string | null>(null);
   const [showUserPlaylists, setShowUserPlaylists] = useState(false);
 
-  const { buildCardsFromTracks } = useCardBuilder();
+  const { buildCardsFromTracks } = useCardBuilder(); // card builder hook
 
   const searchTracks = useCallback(
     async (query: string) => {
@@ -75,7 +76,7 @@ export const useMusicLibrary = (accessToken: string | null) => {
       setLoading(true);
       setError(null);
       const userPlaylists = await getCurrentUserPlaylists(accessToken);
-      const validPlaylists = userPlaylists.filter((playlist): playlist is SpotifyPlaylist => playlist !== null);
+      const validPlaylists = userPlaylists.filter((playlist): playlist is SpotifyPlaylist => playlist !== null); // filter by type
       setPlaylists(validPlaylists);
       setShowUserPlaylists(true);
     } catch (err) {
@@ -86,7 +87,7 @@ export const useMusicLibrary = (accessToken: string | null) => {
     }
   }, [accessToken]);
 
-  const toggleUserPlaylists = useCallback(async () => {
+  const toggleUserPlaylists = useCallback(async () => { // toggle if users playlists are shown or not
     if (showUserPlaylists) {
       setShowUserPlaylists(false);
     } else {
@@ -103,7 +104,7 @@ export const useMusicLibrary = (accessToken: string | null) => {
       setSelectedPlaylists([]);
 
       const tracks = await getCurrentUserSavedTracks(accessToken);
-      return buildCardsFromTracks(tracks);
+      return buildCardsFromTracks(tracks); // generate tracks based on those
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to load saved tracks";
       setError(message);
@@ -120,10 +121,13 @@ export const useMusicLibrary = (accessToken: string | null) => {
       try {
         setLoading(true);
         setError(null);
+
+        // Store the user's current playlist selection in state.
         setSelectedPlaylists(playlistsToLoad);
 
+        // Load tracks for every selected playlist in parallel.
         const trackLists = await Promise.all(
-          playlistsToLoad.map((playlist) => getPlaylistTracks(accessToken, playlist.id, 50))
+          playlistsToLoad.map((playlist) => getPlaylistTracks(accessToken, playlist.id, 50)) //tracks
         );
 
         const seen = new Set<string>();
@@ -131,13 +135,14 @@ export const useMusicLibrary = (accessToken: string | null) => {
 
         trackLists.forEach((playlistTracks) => {
           playlistTracks.forEach((track) => {
-            if (!seen.has(track.id)) {
+            if (!seen.has(track.id)) { // filter duplicates
               seen.add(track.id);
               mergedTracks.push(track);
             }
           });
         });
 
+        // Convert the final deduplicated track list into printable game cards.
         return buildCardsFromTracks(mergedTracks);
       } catch (err) {
         const message = err instanceof Error ? err.message : "Failed to load playlist tracks";
@@ -168,7 +173,7 @@ export const useMusicLibrary = (accessToken: string | null) => {
 
         trackLists.forEach((albumTracks) => {
           albumTracks.forEach((track) => {
-            if (!seen.has(track.id)) {
+            if (!seen.has(track.id)) {// filter duplicates
               seen.add(track.id);
               mergedTracks.push(track);
             }

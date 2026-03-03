@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { QRCard } from "./QRCard";
 import { PrintButton } from "./PrintButton";
 import type { Card } from "../../types/Card";
@@ -14,7 +14,7 @@ type Props = {
   cards: Card[];
 };
 
-const PrintableCard: React.FC<Props> = ({ cards }) => {
+const PrintableCard = ({ cards } : Props) => {
   const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = () => {
@@ -62,7 +62,7 @@ const PrintableCard: React.FC<Props> = ({ cards }) => {
       <PrintButton onPrint={handlePrint} />
       <div ref={printRef} className="print-container">
         <p className="print-instructions">Fold each card in half so the QR code is on one side and the song info is on the other.</p>
-        {cards.map((card) => (
+        {cards.map((card) => (//render all cards
           <QRCard key={card.id} card={card} />
         ))}
       </div>

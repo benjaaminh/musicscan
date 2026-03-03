@@ -1,10 +1,8 @@
-import React from "react";
-
 interface PrintButtonProps {
   onPrint: () => void;
 }
 
-export const PrintButton: React.FC<PrintButtonProps> = ({ onPrint }) => {
+export const PrintButton = ({ onPrint }: PrintButtonProps) => {
   return (
     <button
       onClick={onPrint}

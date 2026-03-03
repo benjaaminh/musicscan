@@ -1,4 +1,3 @@
-import React from "react";
 import { useMusicLibrary } from "../../hooks/useMusicLibrary";
 import { useCardBuilder } from "../../hooks/useCardBuilder";
 import type { SpotifyPlaylist } from "../../spotify/spotifyClient";
@@ -19,7 +18,7 @@ interface MusicLibrarySelectorProps {
   accessToken: string | null;
 }
 
-const MusicLibrarySelector: React.FC<MusicLibrarySelectorProps> = ({ onCardsGenerated, accessToken }) => {
+const MusicLibrarySelector = ({ onCardsGenerated, accessToken }: MusicLibrarySelectorProps) => {
   const {
     playlists,
     selectedPlaylists,

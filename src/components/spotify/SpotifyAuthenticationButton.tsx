@@ -1,12 +1,10 @@
-import React from "react";
-
 /**
  * Button group for Spotify authentication and account state.
  * Shows authentication state and allows users to connect/disconnect Spotify account.
  *
  * @prop spotifyAuthenticated - Whether user is logged into Spotify
- * @prop onConnect - Callback when user clicks "Connect Spotify" button
- * @prop onLogout - Callback when user clicks logout button
+ * @prop onConnect - Function when user clicks "Connect Spotify" button
+ * @prop onLogout - Function when user clicks logout button
  */
 interface SpotifyAuthenticationProps {
   spotifyAuthenticated: boolean;
@@ -14,17 +12,17 @@ interface SpotifyAuthenticationProps {
   onLogout: () => void;
 }
 
-export const SpotifyAuthenticationButton: React.FC<SpotifyAuthenticationProps> = ({
+export const SpotifyAuthenticationButton = ({
   spotifyAuthenticated,
   onConnect,
   onLogout,
-}) => {
+}: SpotifyAuthenticationProps) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
       <button
         onClick={() => {
           if (!spotifyAuthenticated) {
-            onConnect();
+            onConnect(); //if spotify is not authenticated
           }
         }}
         className={`w-full btn ${

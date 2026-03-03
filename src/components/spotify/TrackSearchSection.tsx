@@ -1,6 +1,6 @@
-import React, { useState } from "react";
 import { Alert } from "../common/Alert";
 import type { SpotifyTrack } from "../../spotify/spotifyClient";
+import { useState, type FormEvent } from "react";
 
 interface TrackSearchSectionProps {
   loading: boolean;
@@ -10,16 +10,16 @@ interface TrackSearchSectionProps {
   onToggleTrack: (trackId: string) => void;
 }
 
-export const TrackSearchSection: React.FC<TrackSearchSectionProps> = ({
+export const TrackSearchSection = ({
   loading,
   trackResults,
   selectedTrackIds,
   onSearch,
   onToggleTrack,
-}) => {
-  const [trackQuery, setTrackQuery] = useState("");
+}: TrackSearchSectionProps) => {
+  const [trackQuery, setTrackQuery] = useState(""); //track query string
 
-  const handleSearchTracks = async (e: React.FormEvent) => {
+  const handleSearchTracks = async (e: FormEvent) => {
     e.preventDefault();
     await onSearch(trackQuery);
   };
@@ -46,7 +46,7 @@ export const TrackSearchSection: React.FC<TrackSearchSectionProps> = ({
         </form>
       </div>
 
-      {trackResults.length > 0 && (
+      {trackResults.length > 0 && ( //results
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-3">Track Results</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -58,11 +58,11 @@ export const TrackSearchSection: React.FC<TrackSearchSectionProps> = ({
                   className={`card p-4 cursor-pointer ${
                     isSelected ? "border-slate-300 bg-slate-300/10" : "hover:shadow-md"
                   }`}
-                  onClick={() => onToggleTrack(track.id)}
+                  onClick={() => onToggleTrack(track.id)} //select a track
                 >
                   <h4 className="font-semibold text-sm mb-1 truncate">{track.name}</h4>
                   <p className="text-xs text-muted mb-2">
-                    {track.artists.map((artist) => artist.name).join(", ")}
+                    {track.artists.map((artist) => artist.name).join(", ")} {/* show artists for a track */}
                   </p>
                   <p className="text-xs text-muted">{track.album?.name ?? "Unknown album"}</p>
                   {isSelected && (
@@ -72,7 +72,8 @@ export const TrackSearchSection: React.FC<TrackSearchSectionProps> = ({
               );
             })}
           </div>
-
+          
+          {/* selection message */}
           {selectedTrackIds.length > 0 && (
             <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <Alert message={`Selected ${selectedTrackIds.length} tracks`} variant="success" />

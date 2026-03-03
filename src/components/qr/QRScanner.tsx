@@ -20,9 +20,7 @@ const Scanner = ({ onScan }: Props) => {
   return (
     <div className="space-y-4">
       <CameraScanner onStart={startScanner} isStarted={isStarted} isInitializing={isInitializing} />
-
       <FileScanner fileInputRef={fileInputRef} onFileSelect={handleFileSelect} />
-
       {error && <ErrorAlert message={error} />}
     </div>
   );

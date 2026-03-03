@@ -1,5 +1,3 @@
-import React from "react";
-
 /**
  * Display component for showing scan countdown timer and status message.
  * Shows a status message and numerical countdown during scanning operations.
@@ -12,7 +10,7 @@ interface ScanCountdownProps {
   status: string | null;
 }
 
-export const ScanCountdown: React.FC<ScanCountdownProps> = ({ countdown, status }) => {
+export const ScanCountdown = ({ countdown, status }: ScanCountdownProps) => {
   if (!status) return null;
 
   return (

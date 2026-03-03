@@ -1,5 +1,3 @@
-import React from "react";
-
 /**
  * Button component for loading user's playlists.
  *
@@ -13,11 +11,11 @@ interface LibraryPlaylistsButtonProps {
   isActive: boolean;
 }
 
-export const LibraryPlaylistsButton: React.FC<LibraryPlaylistsButtonProps> = ({
+export const LibraryPlaylistsButton = ({
   onClick,
   loading,
   isActive,
-}) => {
+}: LibraryPlaylistsButtonProps) => {
   return (
     <div className="card p-4">
       <button

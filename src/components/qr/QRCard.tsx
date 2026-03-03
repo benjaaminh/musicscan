@@ -13,13 +13,13 @@ interface CardProps {
   card: Card;
 }
 
-export const QRCard: React.FC<CardProps> = ({ card }) => {
+export const QRCard = ({ card }: CardProps) => {
   return (
     <div className="card-page">
       {/* QR Code Side */}
       <div className="card-side qr-side">
         <div className="qr-content">
-          <QRCode value={card.spotifyUri} size={200} level="H" />
+          <QRCode value={card.spotifyUri} size={200} level="H" /> {/* large qr-code */}
         </div>
       </div>
 

@@ -90,8 +90,8 @@ export const useQRScanner = (onScan: (text: string) => void) => {
 
     try {
       const scanner = ensureScanner();
-      const cameras = await Html5Qrcode.getCameras();
-      const cameraId = pickPreferredBackCameraId(cameras ?? []);
+      const cameras = await Html5Qrcode.getCameras(); // qr library camera
+      const cameraId = pickPreferredBackCameraId(cameras ?? []); //set back cam
       const constraints = cameraId
         ? { deviceId: { exact: cameraId } }
         : { facingMode: "environment" };
@@ -102,7 +102,7 @@ export const useQRScanner = (onScan: (text: string) => void) => {
         (text) => {
           if (hasScannedRef.current) return;
           hasScannedRef.current = true;
-          onScan(text);
+          onScan(text); //trigger scan
 
           if (scanCooldownTimeoutRef.current !== null) {
             window.clearTimeout(scanCooldownTimeoutRef.current);
@@ -139,7 +139,7 @@ export const useQRScanner = (onScan: (text: string) => void) => {
       setError(null);
       try {
         const scanner = ensureScanner();
-        const text = await scanner.scanFile(file, true);
+        const text = await scanner.scanFile(file, true); //library scan
         onScan(text);
       } catch (scanError) {
         const message = scanError instanceof Error ? scanError.message : "Unable to read QR from image.";

@@ -7,12 +7,12 @@ import type { Card } from "../types/Card";
  */
 export const useCardBuilder = () => {
     const buildCardsFromTracks = useCallback((tracks: SpotifyTrack[]): Card[] => {
-        return tracks.map((track, index) => {
+        return tracks.map((track, index) => { // return cards
             const releaseYear = track.album?.release_date
                 ? track.album.release_date.split("-")[0]
                 : "Unknown";
             return {
-                id: `${track.id}-${index}`,
+                id: `${track.id}-${index}`, //construct card data
                 title: track.name,
                 artist: track.artists.map((artist) => artist.name).join(", "),
                 year: parseInt(releaseYear, 10) || 0,

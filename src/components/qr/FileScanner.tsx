@@ -1,18 +1,18 @@
-import React from "react";
+import { type ChangeEvent, type RefObject } from "react";
 
 /**
  * File-based QR code scanner UI component.
  * Allows users to upload an image file containing a QR code for scanning.
  *
  * @prop fileInputRef - Ref to the hidden file input element
- * @prop onFileSelect - Callback when user selects a file
+ * @prop onFileSelect - Function when user selects a file
  */
 interface FileScannerProps {
-  fileInputRef: React.RefObject<HTMLInputElement | null>;
-  onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  fileInputRef: RefObject<HTMLInputElement | null>;
+  onFileSelect: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const FileScanner: React.FC<FileScannerProps> = ({ fileInputRef, onFileSelect }) => {
+export const FileScanner = ({ fileInputRef, onFileSelect }: FileScannerProps) => {
   return (
     <div className="mt-4 card p-4">
       <label htmlFor="qr-file-input" className="block text-sm font-medium text-slate-200 mb-2">

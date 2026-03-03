@@ -1,10 +1,10 @@
-import React from "react";
+import { type ReactNode } from "react";
 
 interface ErrorAlertProps {
   message: string;
 }
 
-export const ErrorAlert: React.FC<ErrorAlertProps> = ({ message }) => {
+export const ErrorAlert = ({ message }: ErrorAlertProps) => {
   return (
     <div className="alert alert-error">
       <p className="text-sm">{message}</p>
@@ -20,11 +20,11 @@ export const ErrorAlert: React.FC<ErrorAlertProps> = ({ message }) => {
  * @prop variant - Alert type: 'info' (default), 'success', 'warning', or error
  */
 interface InfoAlertProps {
-  message: string | React.ReactNode;
+  message: string | ReactNode;
   variant?: "info" | "success" | "warning";
 }
 
-export const Alert: React.FC<InfoAlertProps> = ({ message, variant = "info" }) => {
+export const Alert = ({ message, variant = "info" }: InfoAlertProps ) => {
   const variantClass = {
     error: "alert-error",
     success: "alert-success",

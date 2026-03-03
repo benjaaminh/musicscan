@@ -1,4 +1,3 @@
-import React from "react";
 import type { SpotifyPlaylist } from "../../spotify/spotifyClient";
 
 /**
@@ -19,13 +18,13 @@ interface PlaylistPickerGridProps {
   showUserPlaylists: boolean;
 }
 
-export const PlaylistPickerGrid: React.FC<PlaylistPickerGridProps> = ({
+export const PlaylistPickerGrid = ({
   playlists,
   selectedPlaylistIds,
   onToggle,
   loading,
   showUserPlaylists,
-}) => {
+}: PlaylistPickerGridProps) => {
   if (loading) {
     return (
       <div className="text-center py-8">
