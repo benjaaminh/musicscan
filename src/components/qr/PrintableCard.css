@@ -107,8 +107,14 @@
   }
 
   .metadata-content .year {
+  margin: 1px 0;
+  font-size: 7px;
+  color: #000;
+  }
+
+  .metadata-content .title {
     margin: 1px 0;
-    font-size: 7px;
+    font-size: 9px;
     color: #000;
   }
 }
@@ -207,6 +213,15 @@
   margin: 0;
   font-size: 14px;
   color: #000;
+  width: 100%;
+  text-align: center;
+}
+
+.metadata-content .title {
+  margin: 0;
+  font-size: 14px;
+  color: #000;
+  word-wrap: break-word;
   width: 100%;
   text-align: center;
 }
